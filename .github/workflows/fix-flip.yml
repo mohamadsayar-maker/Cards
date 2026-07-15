@@ -1,0 +1,90 @@
+name: Fix card flip interaction
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-flip.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch embedded deck
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, gzip, base64
+
+          path = Path('index.html')
+          wrapper = path.read_text(encoding='utf-8')
+          match = re.search(r"const b64=`([^`]+)`", wrapper)
+          if not match:
+              raise SystemExit('Embedded deck payload not found')
+
+          app = gzip.decompress(base64.b64decode(match.group(1))).decode('utf-8')
+
+          app = app.replace(
+              ".card.flipped .float-layer { transform:none!important; filter:none!important; }\n",
+              ""
+          )
+          app = app.replace(
+              "let pressStartedOnFront=false;",
+              "let pressStartedOnActiveFace=false;"
+          )
+
+          old_down = '''function down(e) {
+            if(settling)return;
+            const active=carousel.children[current];
+            const front=active?.querySelector('.front');
+            pressStartedOnFront=!!front && front.contains(e.target) && !active.classList.contains('flipped');
+
+            dragging=true;pointerId=e.pointerId;moved=false;
+            startX=lastX=e.clientX;startY=lastY=e.clientY;lastTime=performance.now();
+            dx=dy=vx=vy=0;
+            carousel.setPointerCapture?.(e.pointerId);
+          }'''
+
+          new_down = '''function down(e) {
+            if(settling)return;
+            const active=carousel.children[current];
+            const visibleFace=active?.classList.contains('flipped')
+              ? active.querySelector('.back')
+              : active?.querySelector('.front');
+            pressStartedOnActiveFace=!!visibleFace && visibleFace.contains(e.target);
+
+            dragging=true;pointerId=e.pointerId;moved=false;
+            startX=lastX=e.clientX;startY=lastY=e.clientY;lastTime=performance.now();
+            dx=dy=vx=vy=0;
+            carousel.setPointerCapture?.(e.pointerId);
+          }'''
+
+          app = app.replace(old_down, new_down)
+          app = app.replace(
+              "const tap=!moved&&Math.hypot(dx,dy)<8&&pressStartedOnFront;",
+              "const tap=!moved&&Math.hypot(dx,dy)<8&&pressStartedOnActiveFace;"
+          )
+          app = app.replace(
+              "pressStartedOnFront=false;",
+              "pressStartedOnActiveFace=false;"
+          )
+          app = app.replace(
+              "const jumpLead=Math.max(70,Math.min(180,s.flipMs*.22));",
+              "const jumpLead=Math.max(110,Math.min(240,s.flipMs*.30));"
+          )
+
+          payload = base64.b64encode(gzip.compress(app.encode('utf-8'))).decode('ascii')
+          wrapper = wrapper[:match.start(1)] + payload + wrapper[match.end(1):]
+          path.write_text(wrapper, encoding='utf-8')
+          PY
+      - name: Commit repaired deck
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Fix back-face click and flip jump" || exit 0
+          git push
