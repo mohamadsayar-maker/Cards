@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#f4f1ea">
+  <title>Mental Notes Deck</title>
+  <style>
+    html,body{margin:0;width:100%;height:100%;display:grid;place-items:center;background:#f4f1ea;color:#111;font-family:system-ui,-apple-system,sans-serif}
+    p{opacity:.55;font-size:14px}
+  </style>
+</head>
+<body>
+  <p>Loading deck…</p>
+  <script>
+    (async()=>{
+      try{
+        if(!('DecompressionStream' in window)) throw new Error('This browser needs a newer version to open the deck.');
+        const encoded=(await fetch('./app.html.gz.b64',{cache:'no-store'}).then(r=>r.text())).trim();
+        const bytes=Uint8Array.from(atob(encoded),c=>c.charCodeAt(0));
+        const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+        const html=await new Response(stream).text();
+        document.open();
+        document.write(html);
+        document.close();
+      }catch(error){
+        document.body.innerHTML='<p>Unable to load the deck. '+error.message+'</p>';
+      }
+    })();
+  </script>
+</body>
+</html>
