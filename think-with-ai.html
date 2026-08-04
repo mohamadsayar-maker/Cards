@@ -7,58 +7,127 @@
 <title>Think With AI</title>
 <style>
 html,body{height:100%;margin:0;background:#f4f1ea;color:#11110f;font:16px/1.5 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-.loading{height:100%;display:grid;place-items:center;text-align:center;padding:24px}.loading small{display:block;color:#77736b;margin-top:8px;max-width:420px}
+.loading{height:100%;display:grid;place-items:center;text-align:center;padding:24px}.loading small{display:block;color:#77736b;margin-top:8px;max-width:440px}
 </style>
 </head>
 <body>
-<div class="loading" id="loading">Loading Think With AI…<small>The original card engine is being prepared with the new 52-card content.</small></div>
+<div class="loading" id="loading">Loading Think With AI…<small>Preparing the original card experience with the new 52-card content.</small></div>
 <script>
 (async()=>{
-  const engineUrl='card2.html';
+  const originalUrl='https://raw.githubusercontent.com/mohamadsayar-maker/Cards/83fc2095ac0dd7780e2d210f8481036d4c36ca95/index.html';
   const contentUrl='https://raw.githubusercontent.com/mohamadsayar-maker/Cards/83a5ccb547ec704c4ad6af72d08a406b34c675e3/think-with-ai.html';
 
+  function scanArray(source,start){
+    let depth=0,quote='',escaped=false,lineComment=false,blockComment=false;
+    for(let i=start;i<source.length;i++){
+      const ch=source[i],next=source[i+1];
+      if(lineComment){if(ch==='\n')lineComment=false;continue}
+      if(blockComment){if(ch==='*'&&next==='/'){blockComment=false;i++}continue}
+      if(quote){
+        if(escaped){escaped=false;continue}
+        if(ch==='\\'){escaped=true;continue}
+        if(ch===quote)quote='';
+        continue;
+      }
+      if(ch==='/'&&next==='/'){lineComment=true;i++;continue}
+      if(ch==='/'&&next==='*'){blockComment=true;i++;continue}
+      if(ch==='"'||ch==="'"||ch==='`'){quote=ch;continue}
+      if(ch==='[')depth++;
+      else if(ch===']'){
+        depth--;
+        if(depth===0)return i;
+      }
+    }
+    return -1;
+  }
+
+  function findCardArray(html){
+    const declaration=/\b(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*/g;
+    const candidates=[];
+    let match;
+    while((match=declaration.exec(html))){
+      const start=declaration.lastIndex;
+      if(html[start]!=='[')continue;
+      const end=scanArray(html,start);
+      if(end<0)continue;
+      const arraySource=html.slice(start,end+1);
+      try{
+        const value=Function('"use strict";return ('+arraySource+');')();
+        if(!Array.isArray(value)||value.length<20||!value.every(item=>item&&typeof item==='object'&&!Array.isArray(item)))continue;
+        const keys=Object.keys(value[0]||{});
+        const stringCount=keys.filter(key=>typeof value[0][key]==='string').length;
+        if(stringCount<2)continue;
+        let score=value.length;
+        if(/card|deck|note/i.test(match[1]))score+=80;
+        if(keys.some(key=>/title|name|heading/i.test(key)))score+=50;
+        if(keys.some(key=>/meaning|description|prompt|question|action/i.test(key)))score+=50;
+        candidates.push({name:match[1],start,end,value,score});
+      }catch(error){}
+    }
+    candidates.sort((a,b)=>b.score-a.score);
+    return candidates[0]||null;
+  }
+
+  function chooseKeys(items){
+    const keys=[...new Set(items.slice(0,Math.min(items.length,12)).flatMap(Object.keys))];
+    const averages=new Map(keys.map(key=>{
+      const values=items.slice(0,Math.min(items.length,12)).map(item=>item[key]).filter(value=>typeof value==='string');
+      return [key,values.length?values.reduce((sum,value)=>sum+value.length,0)/values.length:Infinity];
+    }));
+    const stringKeys=keys.filter(key=>Number.isFinite(averages.get(key))).sort((a,b)=>averages.get(a)-averages.get(b));
+    const pick=regex=>keys.find(key=>regex.test(key));
+    const title=pick(/^(title|name|heading|label)$/i)||pick(/title|name|heading/i)||stringKeys[0];
+    const category=pick(/category|group|section|type/i);
+    const prompt=pick(/prompt|question|action|tip|instruction|exercise/i);
+    const meaning=pick(/meaning|description|definition|summary|body|text|detail/i)||stringKeys.filter(key=>key!==title&&key!==category&&key!==prompt).sort((a,b)=>averages.get(b)-averages.get(a))[0];
+    const fallbackPrompt=prompt||stringKeys.filter(key=>key!==title&&key!==category&&key!==meaning).sort((a,b)=>averages.get(b)-averages.get(a))[0];
+    const id=keys.find(key=>/^(id|number|index|order|cardNumber|cardNo)$/i.test(key))||keys.find(key=>typeof items[0][key]==='number');
+    const rank=pick(/^rank$|cardRank/i);
+    const suit=pick(/^suit$|cardSuit/i);
+    return {title,category,meaning,prompt:fallbackPrompt,id,rank,suit};
+  }
+
   try{
-    const [engineResponse,contentResponse]=await Promise.all([
-      fetch(engineUrl,{cache:'no-store'}),
+    const [originalResponse,contentResponse]=await Promise.all([
+      fetch(originalUrl,{cache:'force-cache'}),
       fetch(contentUrl,{cache:'force-cache'})
     ]);
-    if(!engineResponse.ok) throw new Error('Could not load the original deck engine');
-    if(!contentResponse.ok) throw new Error('Could not load the Think With AI cards');
+    if(!originalResponse.ok)throw new Error('Could not load the original deck');
+    if(!contentResponse.ok)throw new Error('Could not load the new card content');
 
-    let engine=await engineResponse.text();
+    const originalWrapper=await originalResponse.text();
+    const packed=originalWrapper.match(/const b="([A-Za-z0-9+/=]+)"/);
+    if(!packed)throw new Error('Could not unpack the original deck');
+    const bytes=Uint8Array.from(atob(packed[1]),character=>character.charCodeAt(0));
+    let engine=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+
     const contentSource=await contentResponse.text();
-
     const cardsStart=contentSource.indexOf('const cards=[');
     const cardsEnd=contentSource.indexOf('];\nconst icons=',cardsStart);
-    if(cardsStart<0||cardsEnd<0) throw new Error('Could not read the Think With AI card data');
+    if(cardsStart<0||cardsEnd<0)throw new Error('Could not read the 52-card content');
+    const sourceCards=Function('"use strict";return ('+contentSource.slice(cardsStart+'const cards='.length,cardsEnd+1)+');')();
+    if(!Array.isArray(sourceCards)||sourceCards.length!==52)throw new Error('The new deck does not contain 52 cards');
 
-    const arraySource=contentSource.slice(cardsStart+'const cards='.length,cardsEnd+1);
-    const sourceCards=Function('"use strict";return ('+arraySource+');')();
-    if(!Array.isArray(sourceCards)||sourceCards.length!==52) throw new Error('The Think With AI deck did not contain 52 cards');
+    const target=findCardArray(engine);
+    if(!target)throw new Error('Could not locate the original deck content');
+    const keys=chooseKeys(target.value);
+    if(!keys.title)throw new Error('Could not identify the original card title field');
 
-    const cards=sourceCards.map((card,index)=>({
-      id:index+1,
-      title:card.t,
-      meaning:'Use when: '+card.u,
-      prompt:'Ask AI:\n“'+card.a+'”\n\nTry this:\n'+card.x,
-      category:card.c,
-      rank:card.r,
-      suit:card.s
-    }));
+    const mapped=sourceCards.map((sourceCard,index)=>{
+      const card={...target.value[index%target.value.length]};
+      if(keys.id)card[keys.id]=index+1;
+      card[keys.title]=sourceCard.t;
+      if(keys.category)card[keys.category]=sourceCard.c;
+      if(keys.meaning)card[keys.meaning]='Use when: '+sourceCard.u;
+      if(keys.prompt)card[keys.prompt]='Ask AI: “'+sourceCard.a+'”\n\nTry this: '+sourceCard.x;
+      if(keys.rank)card[keys.rank]=sourceCard.r;
+      if(keys.suit)card[keys.suit]=sourceCard.s;
+      return card;
+    });
 
-    const engineCardsStart=engine.indexOf('const cards=');
-    const engineCardsEnd=engine.indexOf('\n\nconst app=',engineCardsStart);
-    if(engineCardsStart<0||engineCardsEnd<0) throw new Error('Could not prepare the original deck engine');
-
-    engine=engine.slice(0,engineCardsStart)+'const cards='+JSON.stringify(cards)+';'+engine.slice(engineCardsEnd);
-    engine=engine
-      .replace('<title>Mental Notes, Card 2</title>','<title>Think With AI</title>')
-      .replace('<div class="brand">Mental Notes</div>','<div class="brand">Think With AI</div>')
-      .replace('aria-label="Mental Notes card deck"','aria-label="Think With AI card deck"')
-      .replace('<h2>Card 2 controls</h2>','<h2>Think With AI controls</h2>')
-      .replace('<div class="type">Behavioural Design</div>','<div class="type">${card.category}</div>')
-      .replace('<body>','<body class="aiDeck">')
-      .replace('</style>',`.aiDeck .meaning{font-size:.94rem;line-height:1.34}.aiDeck .prompt{font-size:.78rem;line-height:1.34;white-space:pre-line;overflow:auto;scrollbar-width:thin}.aiDeck .prompt::-webkit-scrollbar{width:4px}.aiDeck .prompt::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px}</style>`);
+    engine=engine.slice(0,target.start)+JSON.stringify(mapped)+engine.slice(target.end+1);
+    engine=engine.replaceAll('Mental Notes','Think With AI');
+    engine=engine.replaceAll('53 cards','52 cards');
 
     document.open();
     document.write(engine);
