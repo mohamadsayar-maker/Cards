@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Original Cards</title>
+<style>html,body{height:100%;margin:0;background:#090909;color:#fff;font:16px/1.5 system-ui,sans-serif}.loading{height:100%;display:grid;place-items:center;text-align:center;padding:24px}.loading small{display:block;color:#999;margin-top:8px}</style>
+</head>
+<body>
+<div class="loading">Loading the original card deck…<small>The original experience is preserved exactly as it was.</small></div>
+<script>
+(async()=>{
+  const source='https://raw.githubusercontent.com/mohamadsayar-maker/Cards/83fc2095ac0dd7780e2d210f8481036d4c36ca95/index.html';
+  try{
+    const response=await fetch(source,{cache:'force-cache'});
+    if(!response.ok) throw new Error('Unable to load original deck');
+    const html=await response.text();
+    document.open();document.write(html);document.close();
+  }catch(error){
+    document.body.innerHTML='<div class="loading">The original deck could not be loaded.<small>Please check your internet connection and refresh.</small></div>';
+  }
+})();
+</script>
+</body>
+</html>
