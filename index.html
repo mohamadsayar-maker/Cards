@@ -3,20 +3,40 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#090909">
+<meta name="theme-color" content="#f4f1ea">
 <title>Choose a Card Deck</title>
 <style>
-*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(circle at 50% 15%,#292929 0,#111 38%,#070707 100%);color:#f7f4ed;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}.page{min-height:100%;display:grid;place-items:center;padding:max(28px,env(safe-area-inset-top)) clamp(18px,4vw,56px) max(28px,env(safe-area-inset-bottom))}.content{width:min(1040px,100%)}header{text-align:center;margin-bottom:clamp(30px,6vh,64px)}.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#918e87}h1{font-size:clamp(42px,8vw,84px);line-height:.94;letter-spacing:-.06em;margin:14px 0 18px}header p{font-size:clamp(15px,2vw,19px);color:#aaa69f;margin:0}.decks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2vw,24px)}.deck{position:relative;min-height:330px;padding:clamp(24px,4vw,44px);border-radius:30px;text-decoration:none;color:inherit;overflow:hidden;border:1px solid #353535;background:#141414;display:flex;flex-direction:column;justify-content:space-between;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .25s,box-shadow .35s}.deck:hover{transform:translateY(-7px);border-color:#777;box-shadow:0 30px 90px rgba(0,0,0,.42)}.deck:before{content:"";position:absolute;width:230px;height:320px;border-radius:22px;right:-38px;bottom:-100px;transform:rotate(16deg);border:1px solid rgba(255,255,255,.14);background:linear-gradient(145deg,rgba(255,255,255,.12),rgba(255,255,255,.015));box-shadow:-18px 24px 50px rgba(0,0,0,.24)}.deck.new{background:linear-gradient(145deg,#f3f0e8,#dcd6c9);color:#121212;border-color:#eee9df}.deck.new:before{border-color:rgba(0,0,0,.14);background:linear-gradient(145deg,rgba(255,255,255,.8),rgba(0,0,0,.05))}.tag{position:relative;z-index:1;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#8e8b84}.new .tag{color:#6e6961}.deck h2{position:relative;z-index:1;font-size:clamp(32px,4vw,52px);line-height:.98;letter-spacing:-.05em;margin:0 0 14px;max-width:390px}.deck p{position:relative;z-index:1;color:#aaa69f;max-width:360px;line-height:1.55;margin:0}.new p{color:#68635b}.open{position:relative;z-index:1;display:inline-flex;align-items:center;gap:10px;margin-top:28px;font-size:14px;font-weight:650}.arrow{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;border:1px solid currentColor}.footer{text-align:center;margin-top:32px;color:#6f6c66;font-size:11px}@media(max-width:720px){.page{align-items:start}.content{padding-top:8vh}.decks{grid-template-columns:1fr}.deck{min-height:245px;border-radius:24px}.deck:before{width:180px;height:260px}header{margin-bottom:30px}}
+:root{color-scheme:light;--bg:#f4f1ea;--ink:#11110f;--muted:#77736b;--card:#fffef9;--card2:#ebe6da;--line:rgba(24,22,18,.12);--shadow:0 34px 90px rgba(42,34,20,.16)}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#151511;--ink:#fbfaf5;--muted:#aaa59b;--card:#25241f;--card2:#201f1b;--line:rgba(255,255,255,.13);--shadow:0 36px 92px rgba(0,0,0,.42)}
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{background:radial-gradient(circle at 50% 35%,rgba(255,255,255,.38),transparent 32rem),var(--bg);color:var(--ink);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.page{position:relative;min-height:100%;display:grid;place-items:center;padding:max(28px,env(safe-area-inset-top)) clamp(18px,4vw,56px) max(28px,env(safe-area-inset-bottom))}
+.theme{position:absolute;z-index:20;top:calc(16px + env(safe-area-inset-top));right:max(18px,env(safe-area-inset-right));width:34px;height:34px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);background:color-mix(in srgb,var(--card) 86%,transparent);box-shadow:0 14px 36px rgba(42,34,20,.10);color:var(--ink);cursor:pointer}
+.themeIcon{position:relative;width:15px;height:15px;border:2px solid currentColor;border-radius:999px;overflow:hidden;transition:transform .42s cubic-bezier(.2,.8,.2,1)}.themeIcon:before{content:"";position:absolute;inset:0 50% 0 0;background:currentColor}:root[data-theme="dark"] .themeIcon{transform:rotate(180deg)}
+.content{width:min(1040px,100%)}header{text-align:center;margin-bottom:clamp(30px,6vh,64px)}.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted)}h1{font-size:clamp(42px,8vw,84px);line-height:.94;letter-spacing:-.06em;margin:14px 0 0}
+.decks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(14px,2vw,24px)}
+.deck{position:relative;min-height:330px;padding:clamp(24px,4vw,44px);border-radius:30px;text-decoration:none;color:inherit;overflow:hidden;border:1px solid var(--line);background:var(--card);display:flex;align-items:flex-end;transition:transform .35s cubic-bezier(.2,.7,.2,1),border-color .25s,box-shadow .35s}
+.deck:hover,.deck:focus-visible{transform:translateY(-7px);border-color:color-mix(in srgb,var(--ink) 45%,var(--line));box-shadow:var(--shadow);outline:none}
+.deck h2{position:relative;z-index:2;font-size:clamp(38px,5vw,62px);line-height:.92;letter-spacing:-.06em;margin:0;max-width:82%;transition:transform .5s cubic-bezier(.16,1,.3,1)}
+.deck:after{content:"";position:absolute;z-index:3;width:235px;height:325px;border-radius:24px;right:-30px;bottom:-104px;transform:rotate(15deg);border:1px solid var(--line);background:linear-gradient(155deg,color-mix(in srgb,var(--card) 95%,white),var(--card2));box-shadow:-18px 24px 50px rgba(0,0,0,.16);transition:transform .6s cubic-bezier(.16,1,.3,1),right .6s cubic-bezier(.16,1,.3,1),bottom .6s cubic-bezier(.16,1,.3,1)}
+.deck:first-child:after{transform:rotate(-14deg);right:-42px;bottom:-96px}
+.deck:hover:after,.deck:focus-visible:after{right:-122px;bottom:-168px;transform:rotate(24deg)}
+.deck:first-child:hover:after,.deck:first-child:focus-visible:after{right:-130px;bottom:-170px;transform:rotate(-25deg)}
+.deck:hover h2,.deck:focus-visible h2{transform:translateX(4px)}
+@media(max-width:720px){.page{align-items:start}.content{padding-top:8vh}.decks{grid-template-columns:1fr}.deck{min-height:245px;border-radius:24px}.deck:after{width:190px;height:265px;right:-28px;bottom:-90px}.deck h2{max-width:78%}header{margin-bottom:30px}}
+@media(prefers-reduced-motion:reduce){.deck,.deck:after,.deck h2,.themeIcon{transition:none}}
 </style>
 </head>
 <body>
-<main class="page"><div class="content">
-<header><div class="eyebrow">Interactive thinking tools</div><h1>Choose your deck</h1><p>Pick a card set to begin.</p></header>
-<section class="decks">
-<a class="deck" href="classic.html"><div><div class="tag">Original deck</div></div><div><h2>Mental Notes</h2><p>The original interactive card experience, preserved exactly as before.</p><div class="open"><span class="arrow">→</span> Open deck</div></div></a>
-<a class="deck new" href="think-with-ai.html"><div><div class="tag">New, 52 cards</div></div><div><h2>Think With AI</h2><p>Prompts for creativity, design, work, and everyday decisions.</p><div class="open"><span class="arrow">→</span> Open deck</div></div></a>
-</section>
-<div class="footer">Select a deck, then tap cards to explore</div>
+<main class="page">
+<button class="theme" id="theme" aria-label="Toggle theme"><span class="themeIcon" aria-hidden="true"></span></button>
+<div class="content"><header><div class="eyebrow">Interactive thinking tools</div><h1>Choose your deck</h1></header>
+<section class="decks"><a class="deck" href="classic.html"><h2>Mental Notes</h2></a><a class="deck" href="think-with-ai.html"><h2>Think With AI</h2></a></section>
 </div></main>
-</body>
-</html>
+<script>
+const root=document.documentElement;
+const saved=localStorage.getItem("card2Theme")||localStorage.getItem("cardsTheme")||localStorage.getItem("theme");
+if(saved)root.dataset.theme=saved;
+function saveTheme(next){root.dataset.theme=next;["card2Theme","cardsTheme","theme"].forEach(k=>localStorage.setItem(k,next))}
+document.getElementById("theme").addEventListener("click",()=>saveTheme(root.dataset.theme==="dark"?"light":"dark"));
+</script>
+</body></html>
