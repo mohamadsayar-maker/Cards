@@ -14,7 +14,27 @@
   try{
     const response=await fetch(source,{cache:'force-cache'});
     if(!response.ok) throw new Error('Unable to load original deck');
-    const html=await response.text();
+    let html=await response.text();
+    html=html.replace('</style>', `.home{appearance:none;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 86%,transparent);box-shadow:var(--soft-shadow);color:var(--ink);padding:8px 12px;font-size:.78rem;line-height:1;cursor:pointer}.home:hover,.home:focus-visible{border-color:color-mix(in srgb,var(--ink) 45%,var(--line));outline:none}</style>`);
+    html=html.replace('<div class="controls">','<div class="controls"><button class="home" id="home" type="button" aria-label="Return to deck selection">Home</button>');
+    html=html.replace('</body>', `<script>
+      const homeButton=document.getElementById('home');
+      const originalStage=document.getElementById('stage');
+      let originalWheelAccum=0,originalWheelReset;
+      homeButton?.addEventListener('click',()=>{window.location.href='index.html'});
+      originalStage?.addEventListener('wheel',event=>{
+        event.preventDefault();
+        originalWheelAccum+=event.deltaY;
+        clearTimeout(originalWheelReset);
+        originalWheelReset=setTimeout(()=>{originalWheelAccum=0},180);
+        if(Math.abs(originalWheelAccum)<42)return;
+        const direction=Math.sign(originalWheelAccum);
+        const key=direction>0?'ArrowRight':'ArrowLeft';
+        const steps=Math.min(4,Math.max(1,Math.round(Math.abs(originalWheelAccum)/120)));
+        for(let i=0;i<steps;i++)window.dispatchEvent(new KeyboardEvent('keydown',{key}));
+        originalWheelAccum=0;
+      },{passive:false});
+    </script></body>`);
     document.open();document.write(html);document.close();
   }catch(error){
     document.body.innerHTML='<div class="loading">The original deck could not be loaded.<small>Please check your internet connection and refresh.</small></div>';

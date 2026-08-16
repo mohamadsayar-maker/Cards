@@ -96,6 +96,19 @@ button { font:inherit; color:inherit; }
   gap:12px;
   pointer-events:auto;
 }
+.home {
+  appearance:none;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:color-mix(in srgb, var(--card) 86%, transparent);
+  box-shadow:var(--soft-shadow);
+  color:var(--ink);
+  padding:8px 12px;
+  font-size:.78rem;
+  line-height:1;
+  cursor:pointer;
+}
+.home:hover,.home:focus-visible { border-color:color-mix(in srgb,var(--ink) 45%,var(--line)); outline:none; }
 .counter {
   appearance:none;
   border:0;
@@ -388,6 +401,7 @@ button { font:inherit; color:inherit; }
   <header class="topbar">
     <div class="brand">Mental Notes</div>
     <div class="controls">
+      <button class="home" id="home" type="button" aria-label="Return to deck selection">Home</button>
       <button class="counter" id="counter" type="button" aria-label="Drag or tap to move through cards">01 / 53</button>
       <button class="theme" id="theme" aria-label="Toggle theme"><span class="themeIcon" aria-hidden="true"></span></button>
     </div>
@@ -445,6 +459,7 @@ const app=document.getElementById('app');
 const deck=document.getElementById('deck');
 const stage=document.getElementById('stage');
 const counter=document.getElementById('counter');
+const home=document.getElementById('home');
 const hint=document.getElementById('hint');
 const panel=document.getElementById('panel');
 const theme=document.getElementById('theme');
@@ -458,6 +473,8 @@ let sx=0, sy=0, lx=0, ly=0, st=0, dx=0, dy=0, vx=0;
 let moved=false;
 let hintTimer=null;
 let secret='';
+let wheelAccum=0;
+let wheelResetTimer=null;
 
 function clamp(v,min,max) { return Math.max(min, Math.min(max, v)); }
 function mod(n,m) { return ((n%m)+m)%m; }
@@ -596,6 +613,17 @@ function advance(delta) {
   playTone('scroll', Math.min(1.4, Math.abs(delta)*.55));
   update(true);
 }
+function onWheel(e) {
+  if(panel.contains(e.target)) return;
+  e.preventDefault();
+  wheelAccum += e.deltaY;
+  clearTimeout(wheelResetTimer);
+  wheelResetTimer=setTimeout(()=>{ wheelAccum=0; },180);
+  if(Math.abs(wheelAccum)<42) return;
+  const steps=clamp(Math.round(Math.abs(wheelAccum)/120),1,4);
+  advance(Math.sign(wheelAccum)*steps);
+  wheelAccum=0;
+}
 function flipActive() {
   touchInteraction();
   playTone('flip',1);
@@ -704,17 +732,19 @@ theme.addEventListener('click',()=>{
   root.dataset.theme=next;
   localStorage.setItem('card2Theme', next);
 });
+home.addEventListener('click',()=>{ window.location.href='index.html'; });
 stage.addEventListener('pointerdown',down);
 stage.addEventListener('pointermove',move);
 stage.addEventListener('pointerup',up);
 stage.addEventListener('pointercancel',up);
+stage.addEventListener('wheel',onWheel,{passive:false});
 window.addEventListener('resize',()=>update(false));
 window.addEventListener('keydown',e=>{
   if(e.key==='*') registerStarTap();
   secret=(secret+e.key).slice(-3);
   if(secret==='***') panel.classList.toggle('open');
-  if(e.key==='ArrowRight') advance(1);
-  if(e.key==='ArrowLeft') advance(-1);
+  if(e.key==='ArrowRight') { e.preventDefault(); advance(1); }
+  if(e.key==='ArrowLeft') { e.preventDefault(); advance(-1); }
   if(e.key===' ') { e.preventDefault(); flipActive(); }
 });
 document.getElementById('closePanel').addEventListener('click',()=>panel.classList.remove('open'));
