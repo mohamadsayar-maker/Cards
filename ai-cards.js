@@ -1,4 +1,4 @@
-const aiCards=[
+window.aiCards=[
 {r:'A',s:'heart',c:'Creativity',t:'First Spark',u:`You need a starting point but the page feels blank.`,a:`Give me 20 unexpected AI-assisted ideas for [goal]. Make them varied, specific, and not obvious.`,x:`Pick the 3 ideas with the strongest emotional pull, then ask AI to expand each into a rough concept.`},
 {r:'2',s:'heart',c:'Creativity',t:'Bad Ideas First',u:`You are stuck because the work feels too important, serious, or polished too early.`,a:`Give me 15 deliberately bad ideas for [challenge], then extract the useful principles hidden inside them.`,x:`Choose one bad idea and reverse it into something useful, surprising, or commercially viable.`},
 {r:'3',s:'heart',c:'Creativity',t:'Opposite World',u:`The current direction feels predictable, conventional, or too close to what everyone else would do.`,a:`What would the exact opposite of this idea look like? What becomes more interesting when we reverse the assumptions?`,x:`Write down the opposite version, then borrow one feature, behaviour, or tone from it.`},
@@ -52,4 +52,3 @@ const aiCards=[
 {r:'Q',s:'spade',c:'Everyday Decisions',t:'Emotional Check',u:`Strong feelings are influencing the decision, but you are not sure how.`,a:`Which part of my thinking is fear, desire, ego, pressure, guilt, fatigue, or genuine intuition?`,x:`Name the emotion first, then decide whether it is a warning, a wish, or noise.`},
 {r:'K',s:'spade',c:'Everyday Decisions',t:'Final Call',u:`You have enough information and need to choose.`,a:`Give me a clear recommendation, explain why, state the risks, and tell me exactly what to do next.`,x:`Make the decision, define the first action, and set a review point.`}
 ]
-

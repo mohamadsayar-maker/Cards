@@ -7,7 +7,15 @@ import sys
 
 
 ROOT = Path(__file__).resolve().parents[1]
-REQUIRED = ("index.html", "classic.html", "card2.html", "think-with-ai.html")
+REQUIRED = (
+    "index.html",
+    "classic.html",
+    "card2.html",
+    "think-with-ai.html",
+    "ai-cards.js",
+    "ai-design-mastery.html",
+    "ai-design-cards.js",
+)
 
 
 def main() -> int:
@@ -21,6 +29,12 @@ def main() -> int:
     broken = [link for link in links if link.endswith(".html") and not (ROOT / link).is_file()]
     if broken:
         print("Broken local links: " + ", ".join(broken), file=sys.stderr)
+        return 1
+
+    ai_design = (ROOT / "ai-design-cards.js").read_text(encoding="utf-8")
+    ai_design_count = ai_design.count('{"id":')
+    if ai_design_count != 53:
+        print(f"Expected 53 AI Design Mastery cards, found {ai_design_count}.", file=sys.stderr)
         return 1
 
     print(f"Cards smoke check passed ({len(REQUIRED)} required files, {len(links)} landing-page links).")
