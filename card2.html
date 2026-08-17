@@ -1,809 +1,673 @@
-<!doctype html>
-<html lang="en">
-<head>
+<html lang="en" data-theme="dark" style="--card-width: 390px; --transition-ms: 560ms; --flip-ms: 680ms; --jump-height: 22px; --jump-scale: 1.055; --hint-opacity: 0.5; --bg: #171713; --card: #26251f; --ink: #ffffff; --muted: #aaa79f; --front-shadow: 0.36; --back-shadow: 0.16;"><head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
 <meta name="theme-color" content="#f4f1ea">
-<title>Mental Notes, Card 2</title>
+<title>Mental Notes Deck</title>
 <style>
 :root {
-  color-scheme: light;
-  --bg:#f4f1ea;
-  --ink:#11110f;
-  --muted:#77736b;
-  --quiet:#a8a29a;
-  --card:#fffef9;
-  --card2:#f8f5ee;
-  --line:rgba(24,22,18,.12);
-  --shadow:0 34px 90px rgba(42,34,20,.16);
-  --soft-shadow:0 14px 36px rgba(42,34,20,.10);
-  --radius:34px;
-  --w:min(76vw, 390px);
-  --scale:1;
-  --side:2;
-  --x:42%;
-  --z:64px;
-  --rot:8deg;
-  --title-mobile:2.36rem;
-  --title-desktop:3.2rem;
-  --pad:28px;
-  --intro-ms:760ms;
-  --stagger-ms:95ms;
-  --hint-opacity:.55;
+  --bg:#f4f1ea; --ink:#111111; --muted:#6e6a63; --card:#fffdf7;
+  --line:rgba(17,17,17,.12); --radius:28px; --card-width:390px;
+  --front-shadow:.16; --back-shadow:.055; --hint-opacity:.5;
+  --transition-ms:560ms; --flip-ms:680ms;
+  --jump-height:22px; --jump-scale:1.055;
+  --viewport-scale:.78;
 }
 :root[data-theme="dark"] {
-  color-scheme: dark;
-  --bg:#151511;
-  --ink:#fbfaf5;
-  --muted:#aaa59b;
-  --quiet:#706d66;
-  --card:#25241f;
-  --card2:#201f1b;
-  --line:rgba(255,255,255,.13);
-  --shadow:0 36px 92px rgba(0,0,0,.42);
-  --soft-shadow:0 14px 36px rgba(0,0,0,.22);
+  --bg:#171713;
+  --ink:#ffffff;
+  --muted:#aaa79f;
+  --card:#26251f;
+  --line:rgba(255,255,255,.14);
+  --front-shadow:.36;
+  --back-shadow:.16;
 }
-* { box-sizing:border-box; }
-html, body {
-  width:100%;
-  min-height:100%;
-  margin:0;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 38%, rgba(255,255,255,.44), transparent 34rem),
-    var(--bg);
-  color:var(--ink);
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
-  -webkit-font-smoothing:antialiased;
-  text-rendering:geometricPrecision;
+* { box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html,body { width:100%; height:100%; margin:0; overflow:hidden; background:var(--bg); color:var(--ink); }
+body { font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; overscroll-behavior:none; transition:background .35s ease,color .35s ease; }
+button,input { font:inherit; }
+.app { position:relative; width:100%; height:100vh; height:100dvh; min-height:540px; overflow:hidden; }
+header {
+  position:absolute; z-index:30; top:max(16px,env(safe-area-inset-top));
+  left:max(16px,env(safe-area-inset-left)); right:max(16px,env(safe-area-inset-right));
+  display:flex; justify-content:space-between; align-items:center; pointer-events:none;
 }
-body { min-height:100vh; min-height:-webkit-fill-available; }
-button { font:inherit; color:inherit; }
-.app {
-  position:relative;
-  width:100%;
-  height:100vh;
-  min-height:100vh;
-  overflow:hidden;
-  isolation:isolate;
-}
-@supports(height:100dvh) {
-  .app { height:100dvh; min-height:100dvh; }
-}
-.topbar {
-  position:absolute;
-  z-index:30;
-  top:calc(16px + env(safe-area-inset-top));
-  left:max(18px, env(safe-area-inset-left));
-  right:max(18px, env(safe-area-inset-right));
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:18px;
-  pointer-events:none;
-}
-.brand {
-  font-size:.78rem;
-  line-height:1;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--muted);
-  font-weight:620;
-}
-.controls {
-  display:flex;
-  align-items:center;
-  gap:12px;
-  pointer-events:auto;
-}
-.counter {
-  appearance:none;
-  border:0;
-  background:transparent;
-  padding:9px 6px;
-  margin:-9px -6px;
-  font-size:.84rem;
-  letter-spacing:.08em;
-  color:var(--muted);
-  font-variant-numeric:tabular-nums;
-  user-select:none;
-  cursor:grab;
-}
-.counter:active { cursor:grabbing; }
-.theme {
-  width:34px;
-  height:34px;
-  display:grid;
-  place-items:center;
-  border-radius:999px;
-  border:1px solid var(--line);
-  background:color-mix(in srgb, var(--card) 86%, transparent);
-  box-shadow:var(--soft-shadow);
+.brand { font-size:.78rem; font-weight:750; letter-spacing:.16em; text-transform:uppercase; }
+.header-tools{display:flex;align-items:center;gap:10px;pointer-events:auto}
+.counter {font-size:.76rem;color:var(--muted);cursor:ew-resize;user-select:none;-webkit-user-select:none;touch-action:none;padding:6px 8px;border-radius:999px;border:1px solid transparent}.counter:active{border-color:var(--line);background:color-mix(in srgb,var(--card) 84%,transparent)}
+.theme-toggle{
+  width:30px;height:30px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);color:var(--ink);display:grid;place-items:center;padding:0;
   cursor:pointer;
 }
-.themeIcon {
-  position:relative;
-  width:15px;
-  height:15px;
-  border:2px solid currentColor;
-  border-radius:999px;
-  overflow:hidden;
-  transition:transform .42s cubic-bezier(.2,.8,.2,1);
+.theme-glyph{
+  position:relative;width:14px;height:14px;border:1.8px solid currentColor;
+  border-radius:50%;display:block;overflow:hidden;
+  transition:transform .35s cubic-bezier(.2,.8,.2,1);
 }
-.themeIcon:before {
-  content:"";
-  position:absolute;
-  inset:0 50% 0 0;
-  background:currentColor;
+.theme-glyph::before{
+  content:"";position:absolute;inset:0 50% 0 0;background:currentColor;
 }
-:root[data-theme="dark"] .themeIcon { transform:rotate(180deg); }
-.scene {
-  width:100%;
-  height:100%;
-  display:grid;
-  grid-template-rows:minmax(0,1fr) auto;
-  padding:
-    calc(58px + env(safe-area-inset-top))
-    0
-    calc(18px + env(safe-area-inset-bottom));
+:root[data-theme="dark"] .theme-glyph{transform:rotate(180deg)}
+.experience {
+  width:100%; height:100%; display:grid; grid-template-rows:1fr auto;
+  align-items:center; padding:64px 0 calc(18px + env(safe-area-inset-bottom));
 }
 .stage {
-  position:relative;
-  width:100%;
-  height:100%;
-  min-height:0;
-  display:grid;
-  place-items:center;
-  perspective:1400px;
-  touch-action:none;
-  overflow:visible;
+  width:100%; height:100%; min-height:0; display:grid; place-items:center;
+  perspective:1400px; touch-action:none; overflow:visible;
 }
-.deck {
-  position:relative;
-  width:100%;
-  height:min(66vh, 610px);
-  min-height:370px;
-  transform:scale(var(--scale));
-  transform-origin:center;
+.carousel {
+  position:relative; width:100%; height:min(72vh,680px); height:min(72dvh,680px);
+  min-height:420px; display:grid; place-items:center; transform-style:preserve-3d;
+  user-select:none; -webkit-user-select:none; cursor:grab;
+  transform:scale(var(--viewport-scale));
+  transform-origin:center center;
 }
+.carousel:active { cursor:grabbing; }
 .card {
-  position:absolute;
-  left:50%;
-  top:50%;
-  width:var(--w);
-  aspect-ratio:3/4;
-  translate:-50% -50%;
-  transform-style:preserve-3d;
-  transition:
-    transform 560ms cubic-bezier(.2,.8,.2,1),
-    opacity 360ms ease,
-    filter 360ms ease;
-  will-change:transform, opacity;
+  position:absolute; width:min(82vw,var(--card-width)); aspect-ratio:3/4.35;
+  transform-style:preserve-3d; will-change:transform,filter;
+  transition:transform var(--transition-ms) cubic-bezier(.2,.8,.2,1),filter 180ms linear;
 }
-.app.intro .card {
-  animation:cardIn var(--intro-ms) cubic-bezier(.16,.9,.2,1) both;
-  animation-delay:calc(var(--order, 0) * var(--stagger-ms));
+.float-layer {
+  position:absolute; inset:0; transform-style:preserve-3d; will-change:transform,filter;
 }
-@keyframes cardIn {
-  from { opacity:0; transform:translate3d(0,42px,-120px) scale(.9); filter:blur(2px); }
-  to { opacity:var(--target-opacity,1); filter:blur(0); }
+.card:not(.active) .float-layer { transform:none!important; filter:none!important; }
+.inner {
+  position:absolute; inset:0; transform-style:preserve-3d;
+  transition:transform var(--flip-ms) cubic-bezier(.2,.8,.2,1);
 }
-.float {
-  position:absolute;
-  inset:0;
-  transform-style:preserve-3d;
-  transition:transform 540ms cubic-bezier(.2,.8,.2,1), filter 320ms ease;
+.card.flipped .inner { transform:rotateY(180deg); }
+.card.pre-flip .inner{transition:none!important}
+.card.flip-jump .float-layer{
+  animation:flipJump var(--flip-ms) cubic-bezier(.2,.8,.2,1);
 }
-.card.active .float { transition:transform 260ms cubic-bezier(.2,.8,.2,1), filter 220ms ease; }
-.shell {
-  position:absolute;
-  inset:0;
-  transform-style:preserve-3d;
-  transition:transform 680ms cubic-bezier(.19,1,.22,1);
+@keyframes flipJump{
+  0%{transform:translate3d(0,0,0) scale(1)}
+  24%{transform:translate3d(0,calc(var(--jump-height) * -1),0) scale(var(--jump-scale))}
+  52%{transform:translate3d(0,calc(var(--jump-height) * -.62),0) scale(calc(1 + (var(--jump-scale) - 1) * .45))}
+  100%{transform:translate3d(0,0,0) scale(1)}
 }
-.card.flipped .shell { transform:rotateY(180deg); }
+.app.intro header{
+  animation:introHeader 700ms cubic-bezier(.2,.8,.2,1) both;
+}
+.app.intro .card{
+  animation:introCard 850ms cubic-bezier(.16,.9,.2,1) both;
+}
+@keyframes introHeader{
+  from{opacity:0;transform:translateY(-10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes introHint{
+  from{opacity:0;transform:translateY(8px)}
+  to{opacity:var(--hint-opacity);transform:translateY(0)}
+}
+@keyframes introCard{
+  from{opacity:0;transform:translate3d(0,36px,-80px) scale(.9)}
+  to{opacity:1}
+}
 .face {
-  position:absolute;
-  inset:0;
-  display:flex;
-  flex-direction:column;
-  gap:18px;
-  padding:var(--pad);
-  border-radius:var(--radius);
-  border:1px solid var(--line);
-  background:
-    linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, white), var(--card));
-  box-shadow:var(--shadow);
-  overflow:hidden;
-  backface-visibility:hidden;
+  position:absolute; inset:0; display:flex; flex-direction:column; padding:28px;
+  border-radius:var(--radius); border:1px solid var(--line); background:var(--card);
+  overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden;
+  box-shadow:0 20px 46px rgba(25,20,12,var(--front-shadow)); transition:background .35s ease,border-color .35s ease,color .35s ease,box-shadow .35s ease;
 }
+.card:not(.active) .face {
+  box-shadow:0 7px 18px rgba(25,20,12,var(--back-shadow));
+}
+.card:not(.active) .face > * { visibility:hidden; }
+.card:not(.active){pointer-events:none!important}
+.card.active{pointer-events:auto}
+.card.active .front{pointer-events:auto}
+.card.active .back{pointer-events:none}
+.card.active.flipped .front{pointer-events:none}
+.card.active.flipped .back{pointer-events:auto}
 .back { transform:rotateY(180deg); }
-.type {
-  font-size:.76rem;
-  line-height:1;
-  letter-spacing:.24em;
-  text-transform:uppercase;
-  color:var(--muted);
-  font-weight:650;
-}
+.kicker,.label { font-size:.7rem; font-weight:750; letter-spacing:.13em; text-transform:uppercase; color:var(--muted); }
 .title {
   margin:auto 0;
-  font-size:var(--title-mobile);
-  line-height:.96;
-  letter-spacing:-.052em;
-  font-weight:760;
+  font-size:3.25rem;
+  line-height:.98;
+  letter-spacing:-.05em;
+  max-width:100%;
+  overflow-wrap:normal;
+  word-break:normal;
   white-space:normal;
   text-wrap:balance;
-  overflow-wrap:break-word;
-  word-break:normal;
-  hyphens:none;
-  max-width:100%;
 }
-.number {
-  margin-top:auto;
-  font-size:.86rem;
-  color:var(--muted);
-  font-variant-numeric:tabular-nums;
-}
-.meaning {
-  margin:auto 0 0;
-  font-size:1.08rem;
-  line-height:1.36;
-  letter-spacing:-.018em;
-  font-weight:560;
-}
-.prompt {
-  margin-top:auto;
-  padding-top:18px;
-  border-top:1px solid var(--line);
-  color:var(--muted);
-  font-size:.92rem;
-  line-height:1.42;
-}
-.card:not(.active) .title,
-.card:not(.active) .meaning,
-.card:not(.active) .prompt,
-.card:not(.active) .number {
-  opacity:0;
-}
-.card:not(.active) .type { opacity:.32; }
+.num { margin-top:auto; font-size:.73rem; color:var(--muted); }
+.back .num { align-self:flex-end; text-align:right; }
+.copy { margin:20px 0 0; font-size:1rem; line-height:1.45; }
+.divider { height:1px; margin:20px 0; background:var(--line); }
+.prompt { margin:8px 0 0; font-size:1.06rem; line-height:1.42; font-weight:650; }
 .hint {
-  margin:0;
-  text-align:center;
-  font-size:.82rem;
-  color:var(--muted);
-  opacity:0;
-  transform:translateY(6px);
-  transition:opacity .5s ease, transform .5s ease;
+  margin:0;text-align:center;font-size:.78rem;color:var(--muted);
+  opacity:0;transform:translateY(6px);
+  transition:opacity .45s ease,transform .45s ease;
   pointer-events:none;
-  user-select:none;
 }
-.hint.visible { opacity:var(--hint-opacity); transform:none; }
-.panel {
-  position:absolute;
-  z-index:50;
-  left:12px;
-  right:12px;
-  bottom:calc(12px + env(safe-area-inset-bottom));
-  display:none;
-  max-height:min(58vh, 520px);
-  overflow:auto;
-  border:1px solid var(--line);
-  border-radius:26px;
-  background:color-mix(in srgb, var(--card) 94%, transparent);
-  box-shadow:var(--shadow);
-  backdrop-filter:blur(20px);
-  padding:16px;
+.hint.visible{opacity:var(--hint-opacity);transform:translateY(0)}
+.tuner {
+  position:fixed; z-index:100; top:max(10px,env(safe-area-inset-top)); right:10px;
+  width:min(92vw,340px); max-height:calc(100dvh - 20px); overflow:auto;
+  display:none; padding:14px; border:1px solid var(--line); border-radius:14px;
+  background:#f8f6f0; color:#111; box-shadow:none;
 }
-.panel.open { display:block; }
-.panel h2 {
-  margin:0 0 12px;
-  font-size:.82rem;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  color:var(--muted);
+.tuner.open { display:block; }
+:root[data-theme="dark"] .tuner{background:#181714;color:var(--ink)}
+:root[data-theme="dark"] .action{background:#211f1b;color:var(--ink)}
+:root[data-theme="dark"] .theme-toggle{background:#211f1b}
+.tuner-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.tuner h2 { margin:0; font-size:.92rem; }
+.icon-btn { border:0; background:transparent; padding:4px; font-size:1.2rem; }
+.group { padding-top:10px; margin-top:10px; border-top:1px solid var(--line); }
+.group h3 { margin:0 0 9px; font-size:.66rem; letter-spacing:.11em; text-transform:uppercase; color:#777; }
+.control { display:grid; grid-template-columns:1fr auto; gap:5px 10px; margin-bottom:9px; align-items:center; }
+.control label { font-size:.77rem; }
+.control output { font-size:.7rem; color:#777; }
+.control input[type=range] { grid-column:1/-1; width:100%; accent-color:#111; }
+.control input[type=color] { width:38px; height:25px; border:1px solid var(--line); border-radius:5px; padding:0; background:none; }.control select{grid-column:1/-1;width:100%;border:1px solid var(--line);border-radius:8px;background:var(--card);color:var(--ink);padding:8px}
+.actions { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:12px; }
+.action { border:1px solid var(--line); background:#fff; border-radius:9px; padding:9px; font-weight:700; }
+
+:root[data-theme="dark"] body{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(255,255,255,.05),transparent 44%),
+    var(--bg);
 }
-.menuGroup { display:grid; gap:10px; padding:10px 0 14px; border-top:1px solid var(--line); }
-.menuGroup h3 {
-  margin:0;
-  font-size:.72rem;
-  letter-spacing:.16em;
-  text-transform:uppercase;
-  color:var(--quiet);
+:root[data-theme="dark"] .face{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,0)),
+    var(--card);
+  border-color:rgba(255,255,255,.18);
+  color:#fff;
+  box-shadow:0 24px 64px rgba(0,0,0,.48);
 }
-.grid { display:grid; gap:12px; }
-.control {
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:8px;
-  align-items:center;
-  font-size:.86rem;
-  color:var(--muted);
+:root[data-theme="dark"] .card:not(.active) .face{
+  background:color-mix(in srgb,var(--card) 84%,var(--bg));
+  border-color:rgba(255,255,255,.09);
+  box-shadow:0 8px 24px rgba(0,0,0,.34);
 }
-.control input,
-.control select { grid-column:1 / -1; width:100%; }
-.control select {
-  border:1px solid var(--line);
-  border-radius:12px;
-  background:transparent;
-  color:var(--ink);
-  padding:8px 10px;
+:root[data-theme="dark"] .kicker,
+:root[data-theme="dark"] .label,
+:root[data-theme="dark"] .num,
+:root[data-theme="dark"] .counter,
+:root[data-theme="dark"] .hint{
+  color:rgba(255,255,255,.62);
 }
-.switchRow {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  color:var(--muted);
-  font-size:.86rem;
+:root[data-theme="dark"] .divider{
+  background:rgba(255,255,255,.16);
 }
-.actions { display:flex; gap:10px; margin-top:14px; }
-.actions button {
-  flex:1;
-  border:1px solid var(--line);
-  border-radius:999px;
-  background:transparent;
-  padding:10px 12px;
+:root[data-theme="dark"] .theme-toggle{
+  background:#0b0b0b;
+  color:#fff;
+  border-color:rgba(255,255,255,.18);
 }
-@media (min-width:600px) {
-  :root {
-    --scale:.94;
-    --side:3;
-    --x:32%;
-    --z:70px;
-    --w:min(38vw, 400px);
-    --pad:32px;
-  }
-  .deck { height:min(72vh,680px); }
-  .title { font-size:var(--title-desktop); }
+:root[data-theme="dark"] .tuner{
+  background:#0b0b0b;
+  color:#fff;
+  border-color:rgba(255,255,255,.14);
 }
-@media (min-width:1000px) {
-  :root {
-    --scale:1;
-    --side:4;
-    --x:24%;
-    --z:76px;
-    --w:min(28vw, 410px);
-  }
-  .brand { font-size:.84rem; }
+:root[data-theme="dark"] .group{
+  border-color:rgba(255,255,255,.12);
 }
-@media (max-width:380px) {
-  :root {
-    --scale:.92;
-    --w:78vw;
-    --title-mobile:2.12rem;
-    --pad:24px;
-  }
+:root[data-theme="dark"] .group h3,
+:root[data-theme="dark"] .control output{
+  color:rgba(255,255,255,.56);
 }
-@media (max-height:720px) and (max-width:599px) {
-  :root { --scale:.88; --title-mobile:2.02rem; }
-  .deck { height:60vh; min-height:315px; }
+:root[data-theme="dark"] .control input[type=range]{
+  accent-color:#fff;
+}
+:root[data-theme="dark"] .control input[type=color]{
+  border-color:rgba(255,255,255,.16);
+}
+:root[data-theme="dark"] .action{
+  background:#111;
+  color:#fff;
+  border-color:rgba(255,255,255,.14);
+}
+
+@media (max-width:599px){
+  :root{--viewport-scale:.76}
+  .experience{padding-top:58px}
+  .carousel{height:66dvh;min-height:380px}
+}
+@media (min-width:600px) and (max-width:899px){
+  :root{--viewport-scale:.9}
+  .carousel{height:70dvh}
+}
+@media (min-width:900px) and (max-width:1439px){
+  :root{--viewport-scale:1}
+  .carousel{height:min(74dvh,720px)}
+}
+@media (min-width:1440px){
+  :root{--viewport-scale:1.12}
+  .carousel{height:min(76dvh,780px)}
 }
 @media (prefers-reduced-motion:reduce) {
-  .card,.float,.shell,.hint,.themeIcon { transition:none!important; animation:none!important; }
+  .card,.inner { transition-duration:1ms!important; }
 }
+
+.home-button{appearance:none;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);padding:6px 11px;font-size:.76rem;line-height:1;cursor:pointer}.home-button:hover,.home-button:focus-visible{border-color:color-mix(in srgb,var(--ink) 45%,var(--line));outline:none}
 </style>
 </head>
 <body>
-<div class="app intro" id="app">
-  <header class="topbar">
+<main class="app" id="app">
+  <header>
     <div class="brand">Mental Notes</div>
-    <div class="controls">
-      <button class="counter" id="counter" type="button" aria-label="Drag or tap to move through cards">01 / 53</button>
-      <button class="theme" id="theme" aria-label="Toggle theme"><span class="themeIcon" aria-hidden="true"></span></button>
+    <div class="header-tools"><button class="home-button" id="homeButton" type="button" aria-label="Return to deck selection">Home</button>
+      <div class="counter" id="counter">1 / 53</div>
+      <button class="theme-toggle" id="themeToggle" aria-label="Switch to light mode"><span class="theme-glyph" aria-hidden="true"></span></button>
     </div>
   </header>
+  <section class="experience">
+    <div class="stage"><div class="carousel" id="carousel" aria-label="Swipeable card deck"></div>    <p class="hint visible">Swipe left or right, tap the centre card to flip</p>
+  </section>
+</main>
 
-  <main class="scene">
-    <section class="stage" id="stage" aria-label="Mental Notes card deck">
-      <div class="deck" id="deck"></div>
-    </section>
-    <p class="hint" id="hint">Tap to flip. Swipe to move through the deck.</p>
-  </main>
-
-  <aside class="panel" id="panel" aria-label="Deck tuning panel">
-    <h2>Card 2 controls</h2>
-
-    <section class="menuGroup">
-      <h3>Deck</h3>
-      <label class="control">Mobile scale <output id="scaleOut">1</output><input id="scaleControl" type="range" min=".78" max="1.08" step=".01" value="1"></label>
-      <label class="control">Mobile title size <output id="titleOut">2.36</output><input id="titleControl" type="range" min="1.8" max="2.8" step=".02" value="2.36"></label>
-      <label class="control">Side spread <output id="spreadOut">42</output><input id="spreadControl" type="range" min="28" max="58" step="1" value="42"></label>
-      <label class="control">Depth <output id="depthOut">64</output><input id="depthControl" type="range" min="30" max="120" step="2" value="64"></label>
-      <label class="control">Side rotation <output id="rotOut">8</output><input id="rotControl" type="range" min="0" max="18" step=".5" value="8"></label>
-    </section>
-
-    <section class="menuGroup">
-      <h3>Intro animation</h3>
-      <label class="control">Intro duration <output id="introOut">760</output><input id="introControl" type="range" min="180" max="1600" step="10" value="760"></label>
-      <label class="control">Intro stagger <output id="staggerOut">95</output><input id="staggerControl" type="range" min="0" max="180" step="5" value="95"></label>
-      <label class="control">Hint opacity <output id="hintOut">0.55</output><input id="hintControl" type="range" min="0" max="1" step=".01" value=".55"></label>
-    </section>
-
-    <section class="menuGroup">
-      <h3>Sound</h3>
-      <label class="switchRow"><input id="soundEnabled" type="checkbox" checked> Sound enabled</label>
-      <label class="control">Profile <output id="profileOut">soft</output><select id="soundProfile"><option value="soft">Soft</option><option value="paper">Paper</option><option value="wood">Wood</option><option value="glass">Glass</option><option value="digital">Digital</option></select></label>
-      <label class="control">Volume <output id="volumeOut">0.35</output><input id="volumeControl" type="range" min="0" max="1" step=".01" value=".35"></label>
-      <label class="control">Flip pitch <output id="flipPitchOut">180</output><input id="flipPitchControl" type="range" min="80" max="520" step="5" value="180"></label>
-      <label class="control">Scroll pitch <output id="scrollPitchOut">110</output><input id="scrollPitchControl" type="range" min="60" max="360" step="5" value="110"></label>
-      <label class="control">Decay <output id="decayOut">0.08</output><input id="decayControl" type="range" min=".02" max=".6" step=".01" value=".08"></label>
-    </section>
-
-    <div class="actions">
-      <button type="button" id="replay">Replay intro</button>
-      <button type="button" id="saveDefaults">Save default</button>
-      <button type="button" id="resetDefaults">Reset</button>
-      <button type="button" id="closePanel">Close</button>
-    </div>
-  </aside>
-</div>
+<aside class="tuner" id="tuner">
+  <div class="tuner-head"><h2>Deck controls</h2><button class="icon-btn" id="closeTuner" aria-label="Close">×</button></div>
+  <div class="group"><h3>Layout</h3>
+    <div class="control"><label>Card width</label><output data-out="cardWidth">390</output><input data-key="cardWidth" type="range" min="280" max="460" value="390"></div>
+    <div class="control"><label>Visible cards</label><output data-out="visibleCards">4</output><input data-key="visibleCards" type="range" min="1" max="8" step="1" value="4"></div>
+    <div class="control"><label>Horizontal gap</label><output data-out="xGap">94</output><input data-key="xGap" type="range" min="40" max="160" value="94"></div>
+    <div class="control"><label>Vertical rise</label><output data-out="yRise">12</output><input data-key="yRise" type="range" min="0" max="36" value="12"></div>
+    <div class="control"><label>Depth</label><output data-out="zDepth">105</output><input data-key="zDepth" type="range" min="20" max="220" value="105"></div>
+    <div class="control"><label>Scale step</label><output data-out="scaleStep">0.07</output><input data-key="scaleStep" type="range" min="0" max=".15" step=".005" value=".07"></div>
+  </div>
+  <div class="group"><h3>Interaction</h3>
+    <div class="control"><label>Horizontal float</label><output data-out="dragX">0.3</output><input data-key="dragX" type="range" min="0" max=".7" step=".01" value=".30"></div>
+    <div class="control"><label>Vertical float</label><output data-out="dragY">0.28</output><input data-key="dragY" type="range" min="0" max=".7" step=".01" value=".28"></div>
+    <div class="control"><label>Tilt</label><output data-out="tilt">0.04</output><input data-key="tilt" type="range" min="0" max=".12" step=".005" value=".04"></div>
+    <div class="control"><label>Velocity force</label><output data-out="velocityForce">240</output><input data-key="velocityForce" type="range" min="40" max="500" value="240"></div>
+    <div class="control"><label>Max flick cards</label><output data-out="maxSteps">8</output><input data-key="maxSteps" type="range" min="1" max="15" step="1" value="8"></div>
+  </div>
+  <div class="group"><h3>Animation</h3>
+    <div class="control"><label>Carousel duration</label><output data-out="transitionMs">560</output><input data-key="transitionMs" type="range" min="100" max="1200" step="10" value="560"></div>
+    <div class="control"><label>Flip duration</label><output data-out="flipMs">680</output><input data-key="flipMs" type="range" min="150" max="1400" step="10" value="680"></div>
+    <div class="control"><label>Jump height</label><output data-out="jumpHeight">22</output><input data-key="jumpHeight" type="range" min="0" max="60" step="1" value="22"></div>
+    <div class="control"><label>Jump scale</label><output data-out="jumpScale">1.055</output><input data-key="jumpScale" type="range" min="1" max="1.18" step=".005" value="1.055"></div>
+    <div class="control"><label>Spring duration</label><output data-out="springMs">650</output><input data-key="springMs" type="range" min="120" max="1400" step="10" value="650"></div>
+    <div class="control"><label>Drag blur</label><output data-out="dragBlur">1.5</output><input data-key="dragBlur" type="range" min="0" max="10" step=".25" value="1.5"></div>
+    <div class="control"><label>Swipe blur</label><output data-out="swipeBlur">2.5</output><input data-key="swipeBlur" type="range" min="0" max="14" step=".25" value="2.5"></div>
+    <div class="control"><label>Flip blur</label><output data-out="flipBlur">1</output><input data-key="flipBlur" type="range" min="0" max="8" step=".25" value="1"></div>
+  </div>
+  <div class="group"><h3>Sound</h3>
+    <div class="control"><label>Sound enabled</label><output data-out="soundEnabled">1</output><input data-key="soundEnabled" type="range" min="0" max="1" step="1" value="1"></div>
+    <div class="control"><label>Sound profile</label><select data-key="soundProfile"><option value="soft">Soft</option><option value="paper">Paper</option><option value="wood">Wood</option><option value="glass">Glass</option><option value="digital">Digital</option></select></div>
+    <div class="control"><label>Master volume</label><output data-out="soundVolume">0.35</output><input data-key="soundVolume" type="range" min="0" max="1" step=".05" value=".35"></div>
+    <div class="control"><label>Flip pitch</label><output data-out="flipPitch">180</output><input data-key="flipPitch" type="range" min="80" max="500" step="5" value="180"></div>
+    <div class="control"><label>Scroll pitch</label><output data-out="scrollPitch">110</output><input data-key="scrollPitch" type="range" min="50" max="320" step="5" value="110"></div>
+    <div class="control"><label>Sound decay</label><output data-out="soundDecay">0.08</output><input data-key="soundDecay" type="range" min=".02" max=".3" step=".01" value=".08"></div>
+  </div>
+  <div class="group"><h3>Shared visuals</h3>
+    <div class="control"><label>Back-card blur</label><output data-out="backBlur">1</output><input data-key="backBlur" type="range" min="0" max="5" step=".1" value="1"></div>
+    <div class="control"><label>Help opacity</label><output data-out="hintOpacity">0.5</output><input data-key="hintOpacity" type="range" min="0" max="1" step=".05" value=".5"></div>
+  </div>
+  <div class="group"><h3>Light theme colours</h3>
+    <div class="control"><label>Background</label><input data-key="lightBg" type="color" value="#f4f1ea"></div>
+    <div class="control"><label>Card</label><input data-key="lightCard" type="color" value="#fffdf7"></div>
+    <div class="control"><label>Text</label><input data-key="lightInk" type="color" value="#111111"></div>
+    <div class="control"><label>Muted text</label><input data-key="lightMuted" type="color" value="#6e6a63"></div>
+    <div class="control"><label>Front shadow</label><output data-out="lightFrontShadow">0.16</output><input data-key="lightFrontShadow" type="range" min="0" max=".5" step=".01" value=".16"></div>
+    <div class="control"><label>Back shadow</label><output data-out="lightBackShadow">0.055</output><input data-key="lightBackShadow" type="range" min="0" max=".3" step=".005" value=".055"></div>
+  </div>
+  <div class="group"><h3>Dark theme colours</h3>
+    <div class="control"><label>Background</label><input data-key="darkBg" type="color" value="#171713"></div>
+    <div class="control"><label>Card</label><input data-key="darkCard" type="color" value="#26251f"></div>
+    <div class="control"><label>Text</label><input data-key="darkInk" type="color" value="#ffffff"></div>
+    <div class="control"><label>Muted text</label><input data-key="darkMuted" type="color" value="#aaa79f"></div>
+    <div class="control"><label>Front shadow</label><output data-out="darkFrontShadow">0.36</output><input data-key="darkFrontShadow" type="range" min="0" max=".6" step=".01" value=".36"></div>
+    <div class="control"><label>Back shadow</label><output data-out="darkBackShadow">0.16</output><input data-key="darkBackShadow" type="range" min="0" max=".4" step=".01" value=".16"></div>
+  </div>
+  <div class="actions"><button class="action" id="reset">Reset</button><button class="action" id="save">Save as default</button></div>
+</aside>
 
 <script>
-const cards=[{"id":1,"title":"Social Proof","meaning":"People look to others when deciding what is appropriate or valuable.","prompt":"Show credible examples of people like the user. Ask, “Whose behaviour would make this choice feel safer?”"},{"id":2,"title":"Curiosity","meaning":"A small information gap creates a desire to know what comes next.","prompt":"Reveal enough to invite exploration, not enough to remove discovery. Ask, “What useful question can we leave open?”"},{"id":3,"title":"Pattern Recognition","meaning":"People quickly notice familiar structures, repetitions and relationships.","prompt":"Use consistent visual and interaction patterns. Ask, “What can users recognise before they have to read?”"},{"id":4,"title":"Peak-End Rule","meaning":"People remember an experience mainly through its emotional high point and its ending.","prompt":"Design a meaningful peak and a reassuring finish. Ask, “What moment will be remembered, and how does it end?”"},{"id":5,"title":"Recognition over Recall","meaning":"Recognising visible options is easier than remembering commands or information.","prompt":"Keep choices, history and examples visible. Ask, “What are we forcing users to remember?”"},{"id":6,"title":"Gifting","meaning":"Receiving something first can create goodwill and a desire to reciprocate.","prompt":"Offer genuine value before requesting effort or commitment. Ask, “What can we give before we ask?”"},{"id":7,"title":"Delighters","meaning":"Unexpectedly thoughtful details can create disproportionate positive emotion.","prompt":"Add a useful surprise at a meaningful moment. Ask, “Where could a small act of care exceed expectations?”"},{"id":8,"title":"Anchoring & Adjustment","meaning":"The first number, option or reference point strongly shapes later judgement.","prompt":"Choose defaults and comparisons carefully. Ask, “What is the first reference point users see?”"},{"id":9,"title":"Aesthetic-Usability Effect","meaning":"Visually pleasing products are often perceived as easier and more trustworthy.","prompt":"Use craft to support clarity, while still testing actual usability. Ask, “Is beauty clarifying the experience or hiding friction?”"},{"id":10,"title":"Serial Position Effect","meaning":"Items at the beginning and end of a sequence are remembered better than those in the middle.","prompt":"Place the most important content first or last. Ask, “What is currently buried in the middle?”"},{"id":11,"title":"Commitment & Consistency","meaning":"After making a voluntary commitment, people prefer actions that remain consistent with it.","prompt":"Invite small, meaningful commitments that naturally lead forward. Ask, “What first step expresses the user’s own intention?”"},{"id":12,"title":"Appropriate Challenges","meaning":"Motivation rises when difficulty stretches ability without becoming overwhelming.","prompt":"Match challenge to skill and adjust as users improve. Ask, “Is this comfortably difficult, or simply frustrating?”"},{"id":13,"title":"Value Attribution","meaning":"Perceived value is influenced by presentation, context, effort and expectations.","prompt":"Make quality and outcomes legible. Ask, “What signals help users understand why this matters?”"},{"id":14,"title":"Loss Aversion","meaning":"Potential losses usually feel more powerful than equivalent gains.","prompt":"Explain what may be lost without using fear unfairly. Ask, “What existing progress, time or value are users protecting?”"},{"id":15,"title":"Contrast","meaning":"Differences become easier to understand when options are placed beside meaningful alternatives.","prompt":"Compare choices using the dimensions that matter. Ask, “What becomes clearer when these options are seen together?”"},{"id":16,"title":"Framing","meaning":"The way information is presented changes how people interpret the same facts.","prompt":"Test positive, negative and neutral presentations. Ask, “How is our wording shaping the decision?”"},{"id":17,"title":"Priming","meaning":"Earlier cues can influence what people notice, expect and do next.","prompt":"Prepare users with relevant language, examples or context. Ask, “What expectation are we creating before the action?”"},{"id":18,"title":"Familiarity Bias","meaning":"People tend to prefer things they recognise and understand.","prompt":"Connect new behaviour to familiar concepts, then introduce novelty gradually. Ask, “What known pattern can help users enter this new experience?”"},{"id":19,"title":"Feedback Loops","meaning":"Visible consequences help people understand, learn and adjust their behaviour.","prompt":"Make actions produce timely, meaningful feedback. Ask, “Can the user see what changed and why?”"},{"id":20,"title":"Collecting","meaning":"Completing and organising a set can create motivation and attachment.","prompt":"Make items distinct, meaningful and realistically obtainable. Ask, “Would a collection help users see progress or identity?”"},{"id":21,"title":"Limited Duration","meaning":"A genuine time boundary can focus attention and reduce delay.","prompt":"Use honest deadlines and explain their reason. Ask, “Is there a real moment by which this decision matters?”"},{"id":22,"title":"Scarcity","meaning":"Limited availability can increase perceived value and urgency.","prompt":"Communicate real constraints transparently, never invent scarcity. Ask, “What is truly limited, and why?”"},{"id":23,"title":"Visual Imagery","meaning":"Concrete images and imagined scenarios make ideas easier to understand and remember.","prompt":"Show the outcome, context or transformation. Ask, “Can users picture themselves succeeding?”"},{"id":24,"title":"Self-Expression","meaning":"People value tools that help them communicate identity, taste and personality.","prompt":"Allow meaningful customisation and personal choices. Ask, “Where can users make this feel like theirs?”"},{"id":25,"title":"Conceptual Metaphor","meaning":"A familiar concept can make an unfamiliar system easier to understand.","prompt":"Use metaphors that clarify behaviour without restricting it. Ask, “What familiar idea explains this interaction accurately?”"},{"id":26,"title":"Surprise","meaning":"An unexpected but relevant event captures attention and strengthens memory.","prompt":"Break patterns selectively, while preserving control and trust. Ask, “Where would a surprise add meaning rather than confusion?”"},{"id":27,"title":"Limited Choice","meaning":"Too many comparable options can slow decisions and reduce confidence.","prompt":"Curate, group or recommend choices. Ask, “Which options can be removed, combined or deferred?”"},{"id":28,"title":"Variable Rewards","meaning":"Unpredictable rewards can sustain repeated checking and engagement.","prompt":"Use variation for discovery, not compulsion. Ask, “Does uncertainty enrich the experience or exploit attention?”"},{"id":29,"title":"Limited Access","meaning":"Eligibility, invitation or staged access can increase commitment and perceived importance.","prompt":"Use access boundaries only when they serve safety, quality or community. Ask, “What legitimate reason justifies restricted access?”"},{"id":30,"title":"Uniform Connectedness","meaning":"Elements that share a boundary, colour or treatment are perceived as belonging together.","prompt":"Visually connect related information and separate unrelated elements. Ask, “What should users understand as one group?”"},{"id":31,"title":"Reputation","meaning":"People care about how their behaviour affects how others perceive and trust them.","prompt":"Make credibility based on meaningful, verifiable behaviour. Ask, “What actions should contribute to trust?”"},{"id":32,"title":"Affect Heuristic","meaning":"Current emotion influences judgements of risk, quality and desirability.","prompt":"Consider how tone and context affect decisions. Ask, “What emotion is present at this moment, and how might it distort judgement?”"},{"id":33,"title":"Authority","meaning":"People give greater weight to guidance from recognised experts or institutions.","prompt":"Show relevant expertise and evidence, not status alone. Ask, “Why should the user trust this recommendation?”"},{"id":34,"title":"Chunking","meaning":"Information is easier to process when organised into small, meaningful groups.","prompt":"Break complexity into labelled sections and progressive steps. Ask, “What belongs together, and what can wait?”"},{"id":35,"title":"Duration Effects","meaning":"The perceived length of an experience depends on attention, uncertainty and activity, not only clock time.","prompt":"Reduce unexplained waiting and show progress. Ask, “What makes this moment feel longer than it is?”"},{"id":36,"title":"Status Quo Bias","meaning":"People often prefer the current state because change feels risky or effortful.","prompt":"Make switching understandable, reversible and worthwhile. Ask, “What is the hidden cost of leaving the familiar?”"},{"id":37,"title":"Status","meaning":"Visible progress, mastery or contribution can support identity and motivation.","prompt":"Recognise meaningful achievement without creating harmful hierarchy. Ask, “What form of status reflects real value?”"},{"id":38,"title":"Periodic Events","meaning":"Regularly timed events create anticipation, rhythm and habits.","prompt":"Use a predictable cadence for reviews, releases or rituals. Ask, “What recurring moment could give this experience a useful rhythm?”"},{"id":39,"title":"Proximity","meaning":"Items placed close together are perceived as related.","prompt":"Use spacing to communicate structure before adding decoration. Ask, “Are related things close, and unrelated things clearly separated?”"},{"id":40,"title":"Sequencing","meaning":"The order of steps changes comprehension, confidence and willingness to continue.","prompt":"Put prerequisites before decisions and easy wins before complexity. Ask, “What must users understand or feel before the next step?”"},{"id":41,"title":"Shaping","meaning":"Complex behaviour can be learned through a series of reinforced approximations.","prompt":"Reward progress toward the goal, not only perfect completion. Ask, “What smaller behaviour can we support first?”"},{"id":42,"title":"Humor Effect","meaning":"Relevant humour can increase attention, warmth and memorability.","prompt":"Use humour where it fits the audience and never at the user’s expense. Ask, “Can this moment be lighter without becoming less clear?”"},{"id":43,"title":"Sensory Appeal","meaning":"Rich sensory qualities can increase attention, pleasure and perceived quality.","prompt":"Use sound, motion, texture or haptics purposefully and accessibly. Ask, “Which sense could make the feedback more understandable?”"},{"id":44,"title":"Positive Mimicry","meaning":"People are more likely to adopt behaviour they see performed by relatable others.","prompt":"Demonstrate the desired action through credible examples. Ask, “Who can model this behaviour naturally?”"},{"id":45,"title":"Competition","meaning":"Comparison can increase effort when goals and conditions feel fair.","prompt":"Make competition optional, balanced and focused on improvement. Ask, “Would comparison motivate this audience or discourage them?”"},{"id":46,"title":"Autonomy","meaning":"Motivation improves when people feel they are choosing rather than being controlled.","prompt":"Offer meaningful choices, control and easy reversal. Ask, “Where can the user decide how, when or whether to proceed?”"},{"id":47,"title":"Trigger","meaning":"Behaviour often needs a clear cue at the right moment.","prompt":"Connect prompts to ability, motivation and context. Ask, “What cue would be useful precisely when action becomes possible?”"},{"id":48,"title":"Set Completion","meaning":"An incomplete set can create tension and a desire to finish.","prompt":"Show progress and remaining work without manufacturing anxiety. Ask, “Would visible incompleteness help users resume?”"},{"id":49,"title":"Story","meaning":"Narrative gives events causality, emotion and meaning.","prompt":"Frame the user as an active character moving from tension to outcome. Ask, “What change is happening, and what role does the user play?”"},{"id":50,"title":"Achievements","meaning":"Specific milestones can make progress visible and reinforce competence.","prompt":"Recognise meaningful outcomes, not empty activity. Ask, “Which accomplishment deserves acknowledgement?”"},{"id":51,"title":"Need for Certainty","meaning":"Ambiguity can create stress and delay, especially when consequences feel important.","prompt":"Clarify what is known, unknown and likely to happen next. Ask, “What uncertainty is blocking action?”"},{"id":52,"title":"Ownership Bias","meaning":"People value things more once they feel ownership over them.","prompt":"Let users invest, personalise, save or build before asking them to commit further. Ask, “What would make this feel genuinely owned?”"},{"id":53,"title":"Juxtaposition","meaning":"Placing unlike things together can create insight, tension or a new interpretation.","prompt":"Compare contrasting states, ideas or outcomes deliberately. Ask, “What unexpected pairing would reveal something important?”"}];
-
-const app=document.getElementById('app');
-const deck=document.getElementById('deck');
-const stage=document.getElementById('stage');
+const cards=[{"id": 1, "title": "Social Proof", "meaning": "People look to others when deciding what is appropriate or valuable.", "prompt": "Show credible examples of people like the user. Ask, “Whose behaviour would make this choice feel safer?”"}, {"id": 2, "title": "Curiosity", "meaning": "A small information gap creates a desire to know what comes next.", "prompt": "Reveal enough to invite exploration, not enough to remove discovery. Ask, “What useful question can we leave open?”"}, {"id": 3, "title": "Pattern Recognition", "meaning": "People quickly notice familiar structures, repetitions and relationships.", "prompt": "Use consistent visual and interaction patterns. Ask, “What can users recognise before they have to read?”"}, {"id": 4, "title": "Peak-End Rule", "meaning": "People remember an experience mainly through its emotional high point and its ending.", "prompt": "Design a meaningful peak and a reassuring finish. Ask, “What moment will be remembered, and how does it end?”"}, {"id": 5, "title": "Recognition over Recall", "meaning": "Recognising visible options is easier than remembering commands or information.", "prompt": "Keep choices, history and examples visible. Ask, “What are we forcing users to remember?”"}, {"id": 6, "title": "Gifting", "meaning": "Receiving something first can create goodwill and a desire to reciprocate.", "prompt": "Offer genuine value before requesting effort or commitment. Ask, “What can we give before we ask?”"}, {"id": 7, "title": "Delighters", "meaning": "Unexpectedly thoughtful details can create disproportionate positive emotion.", "prompt": "Add a useful surprise at a meaningful moment. Ask, “Where could a small act of care exceed expectations?”"}, {"id": 8, "title": "Anchoring & Adjustment", "meaning": "The first number, option or reference point strongly shapes later judgement.", "prompt": "Choose defaults and comparisons carefully. Ask, “What is the first reference point users see?”"}, {"id": 9, "title": "Aesthetic-Usability Effect", "meaning": "Visually pleasing products are often perceived as easier and more trustworthy.", "prompt": "Use craft to support clarity, while still testing actual usability. Ask, “Is beauty clarifying the experience or hiding friction?”"}, {"id": 10, "title": "Serial Position Effect", "meaning": "Items at the beginning and end of a sequence are remembered better than those in the middle.", "prompt": "Place the most important content first or last. Ask, “What is currently buried in the middle?”"}, {"id": 11, "title": "Commitment & Consistency", "meaning": "After making a voluntary commitment, people prefer actions that remain consistent with it.", "prompt": "Invite small, meaningful commitments that naturally lead forward. Ask, “What first step expresses the user’s own intention?”"}, {"id": 12, "title": "Appropriate Challenges", "meaning": "Motivation rises when difficulty stretches ability without becoming overwhelming.", "prompt": "Match challenge to skill and adjust as users improve. Ask, “Is this comfortably difficult, or simply frustrating?”"}, {"id": 13, "title": "Value Attribution", "meaning": "Perceived value is influenced by presentation, context, effort and expectations.", "prompt": "Make quality and outcomes legible. Ask, “What signals help users understand why this matters?”"}, {"id": 14, "title": "Loss Aversion", "meaning": "Potential losses usually feel more powerful than equivalent gains.", "prompt": "Explain what may be lost without using fear unfairly. Ask, “What existing progress, time or value are users protecting?”"}, {"id": 15, "title": "Contrast", "meaning": "Differences become easier to understand when options are placed beside meaningful alternatives.", "prompt": "Compare choices using the dimensions that matter. Ask, “What becomes clearer when these options are seen together?”"}, {"id": 16, "title": "Framing", "meaning": "The way information is presented changes how people interpret the same facts.", "prompt": "Test positive, negative and neutral presentations. Ask, “How is our wording shaping the decision?”"}, {"id": 17, "title": "Priming", "meaning": "Earlier cues can influence what people notice, expect and do next.", "prompt": "Prepare users with relevant language, examples or context. Ask, “What expectation are we creating before the action?”"}, {"id": 18, "title": "Familiarity Bias", "meaning": "People tend to prefer things they recognise and understand.", "prompt": "Connect new behaviour to familiar concepts, then introduce novelty gradually. Ask, “What known pattern can help users enter this new experience?”"}, {"id": 19, "title": "Feedback Loops", "meaning": "Visible consequences help people understand, learn and adjust their behaviour.", "prompt": "Make actions produce timely, meaningful feedback. Ask, “Can the user see what changed and why?”"}, {"id": 20, "title": "Collecting", "meaning": "Completing and organising a set can create motivation and attachment.", "prompt": "Make items distinct, meaningful and realistically obtainable. Ask, “Would a collection help users see progress or identity?”"}, {"id": 21, "title": "Limited Duration", "meaning": "A genuine time boundary can focus attention and reduce delay.", "prompt": "Use honest deadlines and explain their reason. Ask, “Is there a real moment by which this decision matters?”"}, {"id": 22, "title": "Scarcity", "meaning": "Limited availability can increase perceived value and urgency.", "prompt": "Communicate real constraints transparently, never invent scarcity. Ask, “What is truly limited, and why?”"}, {"id": 23, "title": "Visual Imagery", "meaning": "Concrete images and imagined scenarios make ideas easier to understand and remember.", "prompt": "Show the outcome, context or transformation. Ask, “Can users picture themselves succeeding?”"}, {"id": 24, "title": "Self-Expression", "meaning": "People value tools that help them communicate identity, taste and personality.", "prompt": "Allow meaningful customisation and personal choices. Ask, “Where can users make this feel like theirs?”"}, {"id": 25, "title": "Conceptual Metaphor", "meaning": "A familiar concept can make an unfamiliar system easier to understand.", "prompt": "Use metaphors that clarify behaviour without restricting it. Ask, “What familiar idea explains this interaction accurately?”"}, {"id": 26, "title": "Surprise", "meaning": "An unexpected but relevant event captures attention and strengthens memory.", "prompt": "Break patterns selectively, while preserving control and trust. Ask, “Where would a surprise add meaning rather than confusion?”"}, {"id": 27, "title": "Limited Choice", "meaning": "Too many comparable options can slow decisions and reduce confidence.", "prompt": "Curate, group or recommend choices. Ask, “Which options can be removed, combined or deferred?”"}, {"id": 28, "title": "Variable Rewards", "meaning": "Unpredictable rewards can sustain repeated checking and engagement.", "prompt": "Use variation for discovery, not compulsion. Ask, “Does uncertainty enrich the experience or exploit attention?”"}, {"id": 29, "title": "Limited Access", "meaning": "Eligibility, invitation or staged access can increase commitment and perceived importance.", "prompt": "Use access boundaries only when they serve safety, quality or community. Ask, “What legitimate reason justifies restricted access?”"}, {"id": 30, "title": "Uniform Connectedness", "meaning": "Elements that share a boundary, colour or treatment are perceived as belonging together.", "prompt": "Visually connect related information and separate unrelated elements. Ask, “What should users understand as one group?”"}, {"id": 31, "title": "Reputation", "meaning": "People care about how their behaviour affects how others perceive and trust them.", "prompt": "Make credibility based on meaningful, verifiable behaviour. Ask, “What actions should contribute to trust?”"}, {"id": 32, "title": "Affect Heuristic", "meaning": "Current emotion influences judgements of risk, quality and desirability.", "prompt": "Consider how tone and context affect decisions. Ask, “What emotion is present at this moment, and how might it distort judgement?”"}, {"id": 33, "title": "Authority", "meaning": "People give greater weight to guidance from recognised experts or institutions.", "prompt": "Show relevant expertise and evidence, not status alone. Ask, “Why should the user trust this recommendation?”"}, {"id": 34, "title": "Chunking", "meaning": "Information is easier to process when organised into small, meaningful groups.", "prompt": "Break complexity into labelled sections and progressive steps. Ask, “What belongs together, and what can wait?”"}, {"id": 35, "title": "Duration Effects", "meaning": "The perceived length of an experience depends on attention, uncertainty and activity, not only clock time.", "prompt": "Reduce unexplained waiting and show progress. Ask, “What makes this moment feel longer than it is?”"}, {"id": 36, "title": "Status Quo Bias", "meaning": "People often prefer the current state because change feels risky or effortful.", "prompt": "Make switching understandable, reversible and worthwhile. Ask, “What is the hidden cost of leaving the familiar?”"}, {"id": 37, "title": "Status", "meaning": "Visible progress, mastery or contribution can support identity and motivation.", "prompt": "Recognise meaningful achievement without creating harmful hierarchy. Ask, “What form of status reflects real value?”"}, {"id": 38, "title": "Periodic Events", "meaning": "Regularly timed events create anticipation, rhythm and habits.", "prompt": "Use a predictable cadence for reviews, releases or rituals. Ask, “What recurring moment could give this experience a useful rhythm?”"}, {"id": 39, "title": "Proximity", "meaning": "Items placed close together are perceived as related.", "prompt": "Use spacing to communicate structure before adding decoration. Ask, “Are related things close, and unrelated things clearly separated?”"}, {"id": 40, "title": "Sequencing", "meaning": "The order of steps changes comprehension, confidence and willingness to continue.", "prompt": "Put prerequisites before decisions and easy wins before complexity. Ask, “What must users understand or feel before the next step?”"}, {"id": 41, "title": "Shaping", "meaning": "Complex behaviour can be learned through a series of reinforced approximations.", "prompt": "Reward progress toward the goal, not only perfect completion. Ask, “What smaller behaviour can we support first?”"}, {"id": 42, "title": "Humor Effect", "meaning": "Relevant humour can increase attention, warmth and memorability.", "prompt": "Use humour where it fits the audience and never at the user’s expense. Ask, “Can this moment be lighter without becoming less clear?”"}, {"id": 43, "title": "Sensory Appeal", "meaning": "Rich sensory qualities can increase attention, pleasure and perceived quality.", "prompt": "Use sound, motion, texture or haptics purposefully and accessibly. Ask, “Which sense could make the feedback more understandable?”"}, {"id": 44, "title": "Positive Mimicry", "meaning": "People are more likely to adopt behaviour they see performed by relatable others.", "prompt": "Demonstrate the desired action through credible examples. Ask, “Who can model this behaviour naturally?”"}, {"id": 45, "title": "Competition", "meaning": "Comparison can increase effort when goals and conditions feel fair.", "prompt": "Make competition optional, balanced and focused on improvement. Ask, “Would comparison motivate this audience or discourage them?”"}, {"id": 46, "title": "Autonomy", "meaning": "Motivation improves when people feel they are choosing rather than being controlled.", "prompt": "Offer meaningful choices, control and easy reversal. Ask, “Where can the user decide how, when or whether to proceed?”"}, {"id": 47, "title": "Trigger", "meaning": "Behaviour often needs a clear cue at the right moment.", "prompt": "Connect prompts to ability, motivation and context. Ask, “What cue would be useful precisely when action becomes possible?”"}, {"id": 48, "title": "Set Completion", "meaning": "An incomplete set can create tension and a desire to finish.", "prompt": "Show progress and remaining work without manufacturing anxiety. Ask, “Would visible incompleteness help users resume?”"}, {"id": 49, "title": "Story", "meaning": "Narrative gives events causality, emotion and meaning.", "prompt": "Frame the user as an active character moving from tension to outcome. Ask, “What change is happening, and what role does the user play?”"}, {"id": 50, "title": "Achievements", "meaning": "Specific milestones can make progress visible and reinforce competence.", "prompt": "Recognise meaningful outcomes, not empty activity. Ask, “Which accomplishment deserves acknowledgement?”"}, {"id": 51, "title": "Need for Certainty", "meaning": "Ambiguity can create stress and delay, especially when consequences feel important.", "prompt": "Clarify what is known, unknown and likely to happen next. Ask, “What uncertainty is blocking action?”"}, {"id": 52, "title": "Ownership Bias", "meaning": "People value things more once they feel ownership over them.", "prompt": "Let users invest, personalise, save or build before asking them to commit further. Ask, “What would make this feel genuinely owned?”"}, {"id": 53, "title": "Juxtaposition", "meaning": "Placing unlike things together can create insight, tension or a new interpretation.", "prompt": "Compare contrasting states, ideas or outcomes deliberately. Ask, “What unexpected pairing would reveal something important?”"}];
+const carousel=document.getElementById('carousel');
 const counter=document.getElementById('counter');
-const hint=document.getElementById('hint');
-const panel=document.getElementById('panel');
-const theme=document.getElementById('theme');
-
-let current=0;
-let audioCtx=null;
-let soundSettings={enabled:true,profile:'soft',volume:.35,flipPitch:180,scrollPitch:110,decay:.08};
-let dragging=false;
-let pointerId=null;
-let sx=0, sy=0, lx=0, ly=0, st=0, dx=0, dy=0, vx=0;
-let moved=false;
+let counterDrag=false,counterStartX=0,counterLastStep=0;
+const tuner=document.getElementById('tuner');
+const app=document.getElementById('app');
+const hint=document.querySelector('.hint');
 let hintTimer=null;
-let secret='';
+const themeToggle=document.getElementById('themeToggle');
+const STORAGE_KEY='mental-notes-mobile-v1';
+const THEME_KEY='cardsTheme';
 
-function clamp(v,min,max) { return Math.max(min, Math.min(max, v)); }
-function mod(n,m) { return ((n%m)+m)%m; }
-function isMobile() { return matchMedia('(max-width:599px)').matches; }
-function sides() {
-  const raw=getComputedStyle(document.documentElement).getPropertyValue('--side');
-  return Number(raw.trim()) || (isMobile()?2:4);
-}
-function rel(i) {
-  const n=cards.length;
-  let d=i-current;
-  if(d>n/2) d-=n;
-  if(d<-n/2) d+=n;
-  return d;
-}
-function setHintSoon(delay=5000) {
-  clearTimeout(hintTimer);
-  hintTimer=setTimeout(()=>hint.classList.add('visible'), delay);
-}
-function touchInteraction() {
-  hint.classList.remove('visible');
-  setHintSoon();
-}
+const defaults={
+  cardWidth:390,visibleCards:4,xGap:94,yRise:12,zDepth:105,scaleStep:.07,
+  dragX:.30,dragY:.28,tilt:.04,velocityForce:240,maxSteps:8,
+  transitionMs:560,flipMs:680,jumpHeight:22,jumpScale:1.055,springMs:650,dragBlur:1.5,swipeBlur:2.5,flipBlur:1,
+  backBlur:1,hintOpacity:.5,
+  lightBg:'#f4f1ea',lightCard:'#fffdf7',lightInk:'#111111',lightMuted:'#6e6a63',lightFrontShadow:.16,lightBackShadow:.055,
+  darkBg:'#171713',darkCard:'#26251f',darkInk:'#ffffff',darkMuted:'#aaa79f',darkFrontShadow:.36,darkBackShadow:.16,
+  soundEnabled:1,soundProfile:'soft',soundVolume:.35,flipPitch:180,scrollPitch:110,soundDecay:.08
+};
+let s={...defaults},current=0,dragging=false,pointerId=null,moved=false,settling=false;
+let startX=0,startY=0,lastX=0,lastY=0,lastTime=0,dx=0,dy=0,vx=0,vy=0;
+let pressStartedOnActiveFace=false;
+let audioCtx=null;
+
 function ensureAudio(){
-  if(!soundSettings.enabled) return null;
-  if(!audioCtx) audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==='suspended') audioCtx.resume();
+  if(!audioCtx){
+    const Ctx=window.AudioContext||window.webkitAudioContext;
+    if(!Ctx)return null;
+    audioCtx=new Ctx();
+  }
+  if(audioCtx.state==='suspended')audioCtx.resume();
   return audioCtx;
 }
-function playTone(kind='flip', intensity=1){
+
+function playTactile(type,intensity=1){
+  if(!s.soundEnabled||s.soundVolume<=0)return;
   const ctx=ensureAudio();
-  if(!ctx) return;
+  if(!ctx)return;
   const now=ctx.currentTime;
-  const profile=soundSettings.profile;
-  const base=kind==='flip'?soundSettings.flipPitch:soundSettings.scrollPitch;
-  const gain=ctx.createGain();
-  gain.gain.setValueAtTime(0,now);
-  gain.gain.linearRampToValueAtTime(soundSettings.volume*.22*intensity,now+.008);
-  gain.gain.exponentialRampToValueAtTime(.0001,now+soundSettings.decay);
-
   const osc=ctx.createOscillator();
-  osc.type=profile==='digital'?'square':profile==='glass'?'sine':'triangle';
-  osc.frequency.setValueAtTime(base,now);
-  osc.frequency.exponentialRampToValueAtTime(base*(kind==='flip'?1.55:.78),now+soundSettings.decay);
+  const gain=ctx.createGain();
+  const filter=ctx.createBiquadFilter();
 
-  let filter=null;
-  if(profile==='paper'||profile==='wood'){
-    filter=ctx.createBiquadFilter();
-    filter.type='lowpass';
-    filter.frequency.value=profile==='paper'?900:520;
-    osc.connect(filter);
-    filter.connect(gain);
-  } else {
-    osc.connect(gain);
-  }
+  const profiles={soft:{flip:'triangle',scroll:'sine',fm:1,sm:1,ff:1800,sf:900,click:false},paper:{flip:'sawtooth',scroll:'triangle',fm:1.35,sm:1.15,ff:2600,sf:1500,click:false},wood:{flip:'triangle',scroll:'square',fm:.72,sm:.8,ff:1100,sf:700,click:true},glass:{flip:'sine',scroll:'sine',fm:2.2,sm:1.8,ff:4200,sf:3200,click:true},digital:{flip:'square',scroll:'square',fm:1.6,sm:1.35,ff:3200,sf:2200,click:true}};
+  const p=profiles[s.soundProfile]||profiles.soft;
+  const base=(type==='flip'?s.flipPitch:s.scrollPitch)*(type==='flip'?p.fm:p.sm);
+  osc.type=type==='flip'?p.flip:p.scroll;
+  osc.frequency.setValueAtTime(base,now);
+  osc.frequency.exponentialRampToValueAtTime(
+    Math.max(30,type==='flip'?base*.55:base*.78),
+    now+s.soundDecay
+  );
+
+  filter.type='lowpass';
+  filter.frequency.setValueAtTime(type==='flip'?p.ff:p.sf,now);
+
+  const volume=Math.min(1,s.soundVolume*intensity);
+  gain.gain.setValueAtTime(.0001,now);
+  gain.gain.exponentialRampToValueAtTime(Math.max(.0002,volume*.22),now+.008);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+s.soundDecay);
+
+  osc.connect(filter);
+  filter.connect(gain);
   gain.connect(ctx.destination);
   osc.start(now);
-  osc.stop(now+soundSettings.decay+.03);
+  osc.stop(now+s.soundDecay+.02);
 
-  if(profile==='paper' && kind==='scroll'){
-    const noise=ctx.createBufferSource();
-    const buffer=ctx.createBuffer(1,Math.floor(ctx.sampleRate*.035),ctx.sampleRate);
-    const data=buffer.getChannelData(0);
-    for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1)*(1-i/data.length);
-    const ng=ctx.createGain();
-    ng.gain.setValueAtTime(soundSettings.volume*.035*intensity,now);
-    ng.gain.exponentialRampToValueAtTime(.0001,now+.04);
-    noise.buffer=buffer;
-    noise.connect(ng);
-    ng.connect(ctx.destination);
-    noise.start(now);
+  if(type==='flip'&&p.click){
+    const click=ctx.createOscillator();
+    const clickGain=ctx.createGain();
+    click.type='square';
+    click.frequency.setValueAtTime(base*2.6,now);
+    clickGain.gain.setValueAtTime(volume*.035,now);
+    clickGain.gain.exponentialRampToValueAtTime(.0001,now+.025);
+    click.connect(clickGain);
+    clickGain.connect(ctx.destination);
+    click.start(now);
+    click.stop(now+.03);
   }
+}
+
+function offsetFor(i) {
+  let d=i-current,half=cards.length/2;
+  if(d>half)d-=cards.length;
+  if(d<-half)d+=cards.length;
+  return d;
 }
 
 function build() {
   const frag=document.createDocumentFragment();
-  cards.forEach((card,i)=>{
+  cards.forEach((c,i)=>{
     const el=document.createElement('article');
     el.className='card';
     el.dataset.index=i;
-    el.innerHTML=`
-      <div class="float">
-        <div class="shell">
-          <section class="face front">
-            <div class="type">Behavioural Design</div>
-            <h2 class="title">${card.title}</h2>
-            <div class="number">${String(card.id).padStart(2,'0')}</div>
-          </section>
-          <section class="face back">
-            <div class="type">Meaning</div>
-            <div class="meaning">${card.meaning}</div>
-            <div class="prompt">${card.prompt}</div>
-          </section>
-        </div>
-      </div>`;
+    el.innerHTML=`<div class="float-layer"><div class="inner">
+      <div class="face front"><div class="kicker">Behavioural Design</div><h1 class="title">${c.title}</h1><div class="num">${String(c.id).padStart(2,'0')}</div></div>
+      <div class="face back"><div class="kicker">What it means</div><p class="copy">${c.meaning}</p><div class="divider"></div><div class="label">Ask / act</div><p class="prompt">${c.prompt}</p><div class="num">${String(c.id).padStart(2,'0')}</div></div>
+    </div></div>`;
     frag.appendChild(el);
   });
-  deck.appendChild(frag);
+  carousel.appendChild(frag);
   update(false);
 }
 function update(animate=true) {
-  const side=sides();
-  const items=[...deck.children];
-
-  items.forEach((el,i)=>{
-    const d=rel(i);
-    const a=Math.abs(d);
-    const sign=Math.sign(d);
-    const visible=a<=side;
-    const x=sign * (a * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--x')));
-    const z= -a * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--z'));
-    const r= -sign * Math.min(a,3) * parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--rot'));
-    const opacity=visible ? (1 - a*.13) : 0;
-    const scale=1 - a*.035;
-
-    el.classList.toggle('active', d===0);
-    el.style.visibility=visible?'visible':'hidden';
-    el.style.pointerEvents=visible?'auto':'none';
-    el.style.zIndex=String(100-a);
-    el.style.opacity=opacity;
-    el.style.setProperty('--target-opacity', opacity);
-    el.style.setProperty('--order', a);
-    el.style.transform=`translate3d(${x}%,0,${z}px) rotateY(${r}deg) scale(${scale})`;
-    if(!animate) {
-      el.style.transition='none';
-      requestAnimationFrame(()=>el.style.transition='');
-    }
+  [...carousel.children].forEach((el,i)=>{
+    const o=offsetFor(i),a=Math.abs(o);
+    el.style.transition=animate?'':'none';
+    el.style.transform=`translate3d(${o*s.xGap}px,${a*s.yRise}px,${-a*s.zDepth}px) scale(${1-Math.min(a,4)*s.scaleStep})`;
+    el.style.visibility=a>s.visibleCards?'hidden':'visible';
+    el.style.pointerEvents=a>s.visibleCards?'none':'auto';
+    el.style.opacity='1';
+    el.style.zIndex=100-Math.round(a);
+    el.style.filter=a>2?`blur(${s.backBlur}px)`:'none';
+    el.classList.toggle('active',i===current);
+    if(i!==current)el.classList.remove('flipped');
+    if(i!==current)resetFloat(el);
   });
-
-  counter.textContent=`${String(current+1).padStart(2,'0')} / ${cards.length}`;
+  counter.textContent=`${current+1} / ${cards.length}`;
 }
-function advance(delta) {
-  if(!delta) return;
-  touchInteraction();
-  current=mod(current+delta,cards.length);
-  playTone('scroll', Math.min(1.4, Math.abs(delta)*.55));
-  update(true);
+function resetFloat(card=carousel.children[current]) {
+  const layer=card?.querySelector('.float-layer');
+  if(!layer)return;
+  layer.style.transform='translate3d(0,0,0) rotateX(0deg) rotateY(0deg) rotateZ(0deg)';
+  layer.style.filter='blur(0px)';
 }
 function flipActive() {
-  touchInteraction();
-  playTone('flip',1);
-  deck.children[current]?.classList.toggle('flipped');
+  registerInteraction();
+  const active=carousel.children[current];
+  if(!active || !active.classList.contains('active')) return;
+
+  resetFloat(active);
+  const layer=active.querySelector('.float-layer');
+
+  active.classList.remove('flip-jump');
+  void active.offsetWidth;
+  active.classList.add('flip-jump');
+
+  layer.style.filter=`blur(${s.flipBlur}px)`;
+  playTactile('flip',1);
+
+  const jumpLead=Math.max(110,Math.min(240,s.flipMs*.30));
+  setTimeout(()=>{
+    active.classList.toggle('flipped');
+  },jumpLead);
+
+  setTimeout(()=>{
+    layer.style.filter='blur(0px)';
+    active.classList.remove('flip-jump');
+  },Math.max(220,s.flipMs));
+}
+function advance(dir) {
+  registerInteraction();
+  playTactile('scroll',.72);
+  resetFloat();
+  current=(current+dir+cards.length)%cards.length;
+  update(true);
 }
 function down(e) {
-  const active=deck.children[current];
-  if(!active || !active.contains(e.target)) return;
-  dragging=true;
-  pointerId=e.pointerId;
-  sx=lx=e.clientX;
-  sy=ly=e.clientY;
-  st=performance.now();
-  dx=dy=vx=0;
-  moved=false;
-  active.setPointerCapture?.(pointerId);
+  if(settling)return;
+  const active=carousel.children[current];
+  const visibleFace=active?.classList.contains('flipped')
+    ? active.querySelector('.back')
+    : active?.querySelector('.front');
+  pressStartedOnActiveFace=!!visibleFace && visibleFace.contains(e.target);
+
+  dragging=true;pointerId=e.pointerId;moved=false;
+  startX=lastX=e.clientX;startY=lastY=e.clientY;lastTime=performance.now();
+  dx=dy=vx=vy=0;
+  carousel.setPointerCapture?.(e.pointerId);
 }
 function move(e) {
-  if(!dragging || e.pointerId!==pointerId) return;
-  const now=performance.now();
-  const dt=Math.max(8, now-st);
-  dx=e.clientX-sx;
-  dy=e.clientY-sy;
-  vx=(e.clientX-lx)/dt;
-  lx=e.clientX;
-  ly=e.clientY;
-  st=now;
-  if(Math.hypot(dx,dy)>6) moved=true;
+  if(!dragging||e.pointerId!==pointerId)return;
+  const active=carousel.children[current];
+  const isFlipped=active.classList.contains('flipped');
 
-  const active=deck.children[current];
-  const float=active?.querySelector('.float');
-  if(!float || active.classList.contains('flipped')) return;
+  const now=performance.now(),dt=Math.max(8,now-lastTime);
+  vx=vx*.7+((e.clientX-lastX)/dt)*.3;
+  vy=vy*.7+((e.clientY-lastY)/dt)*.3;
+  dx=e.clientX-startX;dy=e.clientY-startY;
+  if(Math.hypot(dx,dy)>6)moved=true;
+  lastX=e.clientX;lastY=e.clientY;lastTime=now;
 
-  const fx=clamp(dx*.18,-42,42);
-  const fy=clamp(dy*.12,-32,32);
-  const ry=clamp(dx*.018,-8,8);
-  const rx=clamp(-dy*.014,-6,6);
-  float.style.transform=`translate3d(${fx}px,${fy}px,0) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  if(isFlipped)return;
+
+  const layer=active.querySelector('.float-layer');
+  const fx=Math.max(-44,Math.min(44,dx*s.dragX));
+  const fy=Math.max(-40,Math.min(40,dy*s.dragY));
+  const rx=Math.max(-8,Math.min(8,-dy*s.tilt));
+  const ry=Math.max(-10,Math.min(10,dx*s.tilt));
+  const rz=Math.max(-3,Math.min(3,dx*s.tilt*.22));
+  layer.style.transform=`translate3d(${fx}px,${fy}px,0) rotateX(${rx}deg) rotateY(${ry}deg) rotateZ(${rz}deg)`;
+  layer.style.filter=`blur(${Math.min(s.dragBlur,Math.hypot(vx,vy)*2.5)}px)`;
+}
+function springBack(card=carousel.children[current]) {
+  const layer=card?.querySelector('.float-layer'); if(!layer)return;
+  const from=layer.style.transform||'translate3d(0,0,0)';
+  layer.animate([{transform:from,filter:layer.style.filter||'blur(0px)'},{transform:'translate3d(0,0,0) rotateX(0deg) rotateY(0deg) rotateZ(0deg)',filter:'blur(0px)'}],
+    {duration:s.springMs,easing:'cubic-bezier(.16,.9,.2,1)'});
+  resetFloat(card);
+}
+function throwCards(dir,steps,speed) {
+  settling=true;let done=0;
+  const run=()=>{
+    advance(dir);
+    const active=carousel.children[current];
+    active.style.filter=`blur(${Math.min(s.swipeBlur,1+speed*2)}px)`;
+    setTimeout(()=>active.style.filter='none',100);
+    done++;
+    if(done<steps)setTimeout(run,Math.min(180,55+(done/steps)**2*120));
+    else settling=false;
+  };
+  run();
 }
 function up(e) {
-  if(!dragging || e.pointerId!==pointerId) return;
+  if(!dragging||e.pointerId!==pointerId)return;
   dragging=false;
-  const active=deck.children[current];
-  const float=active?.querySelector('.float');
-  if(float) float.style.transform='';
-
-  const tap=!moved && Math.hypot(dx,dy)<8;
-  if(tap) {
+  try{carousel.releasePointerCapture?.(pointerId)}catch(_e){}
+  const active=carousel.children[current];
+  const tap=!moved&&Math.hypot(dx,dy)<8&&pressStartedOnActiveFace;
+  if(tap){
+    resetFloat(active);
     flipActive();
-    return;
+  }else{
+    springBack(active);
+    const px=dx+vx*s.velocityForce,py=dy+vy*180;
+    if(Math.abs(px)>Math.abs(py)*.72&&Math.abs(px)>42) {
+      const dir=px<0?1:-1;
+      const steps=Math.max(1,Math.min(s.maxSteps,Math.round(Math.abs(px)/115)));
+      throwCards(dir,steps,Math.abs(vx));
+    }
   }
-  const power=Math.abs(dx)+Math.abs(vx)*180;
-  if(power>58) {
-    const steps=clamp(Math.round(power/165),1,4);
-    advance(dx<0?steps:-steps);
-  }
-}
-let counterDrag=false,counterStart=0,counterLast=0,counterMoved=false;
-function counterDown(e){
-  counterDrag=true;
-  counterStart=counterLast=e.clientX;
-  counterMoved=false;
-  counter.setPointerCapture?.(e.pointerId);
-}
-function counterMove(e){
-  if(!counterDrag) return;
-  const delta=e.clientX-counterLast;
-  const total=e.clientX-counterStart;
-  if(Math.abs(total)>5) counterMoved=true;
-  if(Math.abs(delta)>18){
-    advance(delta>0?-1:1);
-    counterLast=e.clientX;
-  }
-}
-function counterUp(e){
-  if(!counterDrag) return;
-  counterDrag=false;
-  if(!counterMoved) advance(1);
+  pointerId=null;dx=dy=vx=vy=0;pressStartedOnActiveFace=false;
 }
 
-let tapStars=[];
-function registerStarTap(){
-  const now=performance.now();
-  tapStars=tapStars.filter(t=>now-t<900);
-  tapStars.push(now);
-  if(tapStars.length>=3){
-    tapStars=[];
-    panel.classList.toggle('open');
-  }
+function hideHint(){
+  hint.classList.remove('visible');
+}
+function scheduleHint(delay=5000){
+  clearTimeout(hintTimer);
+  hintTimer=setTimeout(()=>hint.classList.add('visible'),delay);
+}
+function registerInteraction(){
+  hideHint();
+  scheduleHint(5000);
 }
 
-function replayIntro() {
-  app.classList.remove('intro');
-  void app.offsetWidth;
-  app.classList.add('intro');
-  setTimeout(()=>app.classList.remove('intro'), 1600);
+function applyTheme(theme){
+  document.documentElement.dataset.theme=theme;
+  ['cardsTheme','card2Theme','theme','mental-notes-theme-v1'].forEach(key=>localStorage.setItem(key,theme));
+  themeToggle.setAttribute('aria-label',theme==='dark'?'Switch to light mode':'Switch to dark mode');
+  applySettings();
 }
-counter.addEventListener('pointerdown',counterDown);
-counter.addEventListener('pointermove',counterMove);
-counter.addEventListener('pointerup',counterUp);
-counter.addEventListener('pointercancel',counterUp);
-
-theme.addEventListener('click',()=>{
-  const root=document.documentElement;
-  const next=root.dataset.theme==='dark'?'light':'dark';
-  root.dataset.theme=next;
-  localStorage.setItem('card2Theme', next);
-});
-stage.addEventListener('pointerdown',down);
-stage.addEventListener('pointermove',move);
-stage.addEventListener('pointerup',up);
-stage.addEventListener('pointercancel',up);
-window.addEventListener('resize',()=>update(false));
-window.addEventListener('keydown',e=>{
-  if(e.key==='*') registerStarTap();
-  secret=(secret+e.key).slice(-3);
-  if(secret==='***') panel.classList.toggle('open');
-  if(e.key==='ArrowRight') advance(1);
-  if(e.key==='ArrowLeft') advance(-1);
-  if(e.key===' ') { e.preventDefault(); flipActive(); }
-});
-document.getElementById('closePanel').addEventListener('click',()=>panel.classList.remove('open'));
-document.getElementById('replay').addEventListener('click',replayIntro);
-
-const defaults={
-  scale:1,title:2.36,spread:42,depth:64,rot:8,intro:760,stagger:95,hint:.55,
-  soundEnabled:true,soundProfile:'soft',volume:.35,flipPitch:180,scrollPitch:110,decay:.08
-};
-
-function applySaved(){
-  const saved=JSON.parse(localStorage.getItem('card2Settings')||'{}');
-  const s={...defaults,...saved};
-  scaleControl.value=s.scale;
-  titleControl.value=s.title;
-  spreadControl.value=s.spread;
-  depthControl.value=s.depth;
-  rotControl.value=s.rot;
-  introControl.value=s.intro;
-  staggerControl.value=s.stagger;
-  hintControl.value=s.hint;
-  soundEnabled.checked=!!s.soundEnabled;
-  soundProfile.value=s.soundProfile;
-  volumeControl.value=s.volume;
-  flipPitchControl.value=s.flipPitch;
-  scrollPitchControl.value=s.scrollPitch;
-  decayControl.value=s.decay;
-  applyControls();
+function toggleTheme(){
+  applyTheme(document.documentElement.dataset.theme==='dark'?'light':'dark');
 }
-
-function collectSettings(){
-  return {
-    scale:Number(scaleControl.value), title:Number(titleControl.value), spread:Number(spreadControl.value),
-    depth:Number(depthControl.value), rot:Number(rotControl.value), intro:Number(introControl.value),
-    stagger:Number(staggerControl.value), hint:Number(hintControl.value), soundEnabled:soundEnabled.checked,
-    soundProfile:soundProfile.value, volume:Number(volumeControl.value), flipPitch:Number(flipPitchControl.value),
-    scrollPitch:Number(scrollPitchControl.value), decay:Number(decayControl.value)
-  };
+function loadTheme(){
+  const saved=localStorage.getItem('cardsTheme')||localStorage.getItem('card2Theme')||localStorage.getItem('theme')||localStorage.getItem('mental-notes-theme-v1');
+  if(saved) return applyTheme(saved);
+  applyTheme(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');
 }
-
-function applyControls(){
-  const s=collectSettings();
-  document.documentElement.style.setProperty('--scale',s.scale);
-  document.documentElement.style.setProperty('--title-mobile',s.title+'rem');
-  document.documentElement.style.setProperty('--x',s.spread+'%');
-  document.documentElement.style.setProperty('--z',s.depth+'px');
-  document.documentElement.style.setProperty('--rot',s.rot+'deg');
-  document.documentElement.style.setProperty('--intro-ms',s.intro+'ms');
-  document.documentElement.style.setProperty('--stagger-ms',s.stagger+'ms');
-  document.documentElement.style.setProperty('--hint-opacity',s.hint);
-  soundSettings={enabled:s.soundEnabled,profile:s.soundProfile,volume:s.volume,flipPitch:s.flipPitch,scrollPitch:s.scrollPitch,decay:s.decay};
-
-  scaleOut.textContent=s.scale;
-  titleOut.textContent=s.title;
-  spreadOut.textContent=s.spread;
-  depthOut.textContent=s.depth;
-  rotOut.textContent=s.rot;
-  introOut.textContent=s.intro;
-  staggerOut.textContent=s.stagger;
-  hintOut.textContent=s.hint;
-  profileOut.textContent=s.soundProfile;
-  volumeOut.textContent=s.volume;
-  flipPitchOut.textContent=s.flipPitch;
-  scrollPitchOut.textContent=s.scrollPitch;
-  decayOut.textContent=s.decay;
+function applySettings() {
+  const r=document.documentElement.style;
+  r.setProperty('--card-width',s.cardWidth+'px');
+  r.setProperty('--transition-ms',s.transitionMs+'ms');
+  r.setProperty('--flip-ms',s.flipMs+'ms');
+  r.setProperty('--jump-height',s.jumpHeight+'px');
+  r.setProperty('--jump-scale',s.jumpScale);
+  r.setProperty('--hint-opacity',s.hintOpacity);
+  const dark=document.documentElement.dataset.theme==='dark';
+  r.setProperty('--bg',dark?s.darkBg:s.lightBg);
+  r.setProperty('--card',dark?s.darkCard:s.lightCard);
+  r.setProperty('--ink',dark?s.darkInk:s.lightInk);
+  r.setProperty('--muted',dark?s.darkMuted:s.lightMuted);
+  r.setProperty('--front-shadow',dark?s.darkFrontShadow:s.lightFrontShadow);
+  r.setProperty('--back-shadow',dark?s.darkBackShadow:s.lightBackShadow);
   update(false);
 }
-
-[
-  scaleControl,titleControl,spreadControl,depthControl,rotControl,introControl,staggerControl,hintControl,
-  soundEnabled,soundProfile,volumeControl,flipPitchControl,scrollPitchControl,decayControl
-].forEach(el=>el.addEventListener('input',applyControls));
-
-saveDefaults.addEventListener('click',()=>localStorage.setItem('card2Settings',JSON.stringify(collectSettings())));
-resetDefaults.addEventListener('click',()=>{
-  localStorage.removeItem('card2Settings');
-  applySaved();
+function loadInputs() {
+  document.querySelectorAll('[data-key]').forEach(input=>{
+    const key=input.dataset.key;
+    if(s[key]!==undefined)input.value=s[key];
+    const out=document.querySelector(`[data-out="${key}"]`);
+    if(out)out.textContent=input.value;
+    input.addEventListener('input',()=>{
+      s[key]=(input.type==='color'||input.tagName==='SELECT')?input.value:parseFloat(input.value);
+      if(out)out.textContent=input.value;
+      applySettings();
+    });
+  });
+}
+function loadSaved() {
+  try{const saved=JSON.parse(localStorage.getItem(STORAGE_KEY)||'null');if(saved)s={...s,...saved};}catch(_e){}
+}
+carousel.addEventListener('pointerdown',e=>{ensureAudio();registerInteraction();down(e);});
+carousel.addEventListener('pointermove',move);
+carousel.addEventListener('pointerup',up);
+carousel.addEventListener('pointercancel',up);
+document.getElementById('closeTuner').onclick=()=>tuner.classList.remove('open');
+themeToggle.onclick=()=>{ensureAudio();registerInteraction();toggleTheme();};
+counter.addEventListener('pointerdown',e=>{counterDrag=true;counterStartX=e.clientX;counterLastStep=0;counter.setPointerCapture?.(e.pointerId);ensureAudio();});
+counter.addEventListener('pointermove',e=>{if(!counterDrag)return;const step=Math.trunc((e.clientX-counterStartX)/28);if(step!==counterLastStep){const diff=step-counterLastStep;const dir=diff>0?1:-1;for(let i=0;i<Math.abs(diff);i++)advance(dir);counterLastStep=step;}});
+counter.addEventListener('pointerup',e=>{counterDrag=false;try{counter.releasePointerCapture?.(e.pointerId)}catch(_e){}});
+counter.addEventListener('pointercancel',()=>counterDrag=false);
+document.getElementById('reset').onclick=()=>{localStorage.removeItem(STORAGE_KEY);s={...defaults};loadInputs();applySettings();};
+document.getElementById('save').onclick=()=>{localStorage.setItem(STORAGE_KEY,JSON.stringify(s));const b=document.getElementById('save');b.textContent='Saved';setTimeout(()=>b.textContent='Save as default',800);};
+let stars=0,starTimer;
+document.addEventListener('keydown',e=>{
+  if(e.key==='*'){stars++;clearTimeout(starTimer);starTimer=setTimeout(()=>stars=0,900);if(stars>=3){stars=0;tuner.classList.toggle('open');}return;}
+  if(e.key.toLowerCase()==='d' && !e.metaKey && !e.ctrlKey && !e.altKey){toggleTheme();return;}
+  if(e.key==='ArrowLeft')advance(-1);
+  if(e.key==='ArrowRight')advance(1);
+  if(e.key===' '){e.preventDefault();flipActive();}
+  if(e.key==='Escape')tuner.classList.remove('open');
 });
-applySaved();
-
-const savedTheme=localStorage.getItem('card2Theme');
-if(savedTheme) document.documentElement.dataset.theme=savedTheme;
-
+loadTheme();
+loadSaved();
 build();
+loadInputs();
+applySettings();
 setTimeout(()=>{
   hint.classList.add('visible');
-  setTimeout(()=>{ hint.classList.remove('visible'); setHintSoon(); },2200);
-},480);
-setTimeout(()=>app.classList.remove('intro'),1600);
+  setTimeout(()=>{
+    hideHint();
+    scheduleHint(5000);
+  },2200);
+},450);
+setTimeout(()=>app.classList.remove('intro'),1100);
 </script>
-</body>
-</html>
+
+<script>
+const homeButton=document.getElementById('homeButton');
+homeButton?.addEventListener('click',()=>{window.location.href='index.html'});
+let wheelAccum=0,wheelReset;
+document.querySelector('.stage')?.addEventListener('wheel',event=>{
+  if(document.getElementById('tuner')?.contains(event.target))return;
+  event.preventDefault();
+  wheelAccum+=event.deltaY;
+  clearTimeout(wheelReset);
+  wheelReset=setTimeout(()=>{wheelAccum=0},180);
+  if(Math.abs(wheelAccum)<42)return;
+  advance(Math.sign(wheelAccum));
+  wheelAccum=0;
+},{passive:false});
+</script>
+</body></html>
