@@ -14,8 +14,8 @@ html,body{height:100%;margin:0;background:#f4f1ea;color:#11110f;font:16px/1.5 In
 <div class="loading" id="loading">Loading Think With AI…<small>Preparing the original card experience with the new 52-card content.</small></div>
 <script>
 (async()=>{
-  const originalUrl='https://raw.githubusercontent.com/mohamadsayar-maker/Cards/83fc2095ac0dd7780e2d210f8481036d4c36ca95/index.html';
-  const contentUrl='https://raw.githubusercontent.com/mohamadsayar-maker/Cards/83a5ccb547ec704c4ad6af72d08a406b34c675e3/think-with-ai.html';
+  const originalUrl='./card2.html';
+  const contentUrl='./ai-cards.js';
 
   function scanArray(source,start){
     let depth=0,quote='',escaped=false,lineComment=false,blockComment=false;
@@ -89,23 +89,18 @@ html,body{height:100%;margin:0;background:#f4f1ea;color:#11110f;font:16px/1.5 In
 
   try{
     const [originalResponse,contentResponse]=await Promise.all([
-      fetch(originalUrl,{cache:'force-cache'}),
-      fetch(contentUrl,{cache:'force-cache'})
+      fetch(originalUrl,{cache:'no-store'}),
+      fetch(contentUrl,{cache:'no-store'})
     ]);
     if(!originalResponse.ok)throw new Error('Could not load the original deck');
     if(!contentResponse.ok)throw new Error('Could not load the new card content');
 
-    const originalWrapper=await originalResponse.text();
-    const packed=originalWrapper.match(/const b="([A-Za-z0-9+/=]+)"/);
-    if(!packed)throw new Error('Could not unpack the original deck');
-    const bytes=Uint8Array.from(atob(packed[1]),character=>character.charCodeAt(0));
-    let engine=await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-
+    let engine=await originalResponse.text();
     const contentSource=await contentResponse.text();
-    const cardsStart=contentSource.indexOf('const cards=[');
-    const cardsEnd=contentSource.indexOf('];\nconst icons=',cardsStart);
+    const cardsStart=contentSource.indexOf('const aiCards=');
+    const cardsEnd=contentSource.lastIndexOf(']');
     if(cardsStart<0||cardsEnd<0)throw new Error('Could not read the 52-card content');
-    const sourceCards=Function('"use strict";return ('+contentSource.slice(cardsStart+'const cards='.length,cardsEnd+1)+');')();
+    const sourceCards=Function('"use strict";return ('+contentSource.slice(cardsStart+'const aiCards='.length,cardsEnd+1)+');')();
     if(!Array.isArray(sourceCards)||sourceCards.length!==52)throw new Error('The new deck does not contain 52 cards');
 
     const target=findCardArray(engine);
@@ -128,26 +123,6 @@ html,body{height:100%;margin:0;background:#f4f1ea;color:#11110f;font:16px/1.5 In
     engine=engine.slice(0,target.start)+JSON.stringify(mapped)+engine.slice(target.end+1);
     engine=engine.replaceAll('Mental Notes','Think With AI');
     engine=engine.replaceAll('53 cards','52 cards');
-    engine=engine.replace('</style>', `.home{appearance:none;border:1px solid var(--line);border-radius:999px;background:color-mix(in srgb,var(--card) 86%,transparent);box-shadow:var(--soft-shadow);color:var(--ink);padding:8px 12px;font-size:.78rem;line-height:1;cursor:pointer}.home:hover,.home:focus-visible{border-color:color-mix(in srgb,var(--ink) 45%,var(--line));outline:none}</style>`);
-    engine=engine.replace('<div class="controls">','<div class="controls"><button class="home" id="home" type="button" aria-label="Return to deck selection">Home</button>');
-    engine=engine.replace('</body>', `<script>
-      const homeButton=document.getElementById('home');
-      const deckStage=document.getElementById('stage');
-      let wheelAccum=0,wheelReset;
-      homeButton?.addEventListener('click',()=>{window.location.href='index.html'});
-      deckStage?.addEventListener('wheel',event=>{
-        if(document.getElementById('panel')?.contains(event.target))return;
-        event.preventDefault();
-        wheelAccum+=event.deltaY;
-        clearTimeout(wheelReset);
-        wheelReset=setTimeout(()=>{wheelAccum=0},180);
-        if(Math.abs(wheelAccum)<42)return;
-        const steps=Math.min(4,Math.max(1,Math.round(Math.abs(wheelAccum)/120)));
-        advance(Math.sign(wheelAccum)*steps);
-        wheelAccum=0;
-      },{passive:false});
-    </script></body>`);
-
     document.open();
     document.write(engine);
     document.close();
