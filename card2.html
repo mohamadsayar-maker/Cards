@@ -534,7 +534,6 @@ function down(e) {
 function move(e) {
   if(!dragging||e.pointerId!==pointerId)return;
   const active=carousel.children[current];
-  const isFlipped=active.classList.contains('flipped');
 
   const now=performance.now(),dt=Math.max(8,now-lastTime);
   vx=vx*.7+((e.clientX-lastX)/dt)*.3;
@@ -542,8 +541,6 @@ function move(e) {
   dx=e.clientX-startX;dy=e.clientY-startY;
   if(Math.hypot(dx,dy)>6)moved=true;
   lastX=e.clientX;lastY=e.clientY;lastTime=now;
-
-  if(isFlipped)return;
 
   const layer=active.querySelector('.float-layer');
   const fx=Math.max(-44,Math.min(44,dx*s.dragX));
