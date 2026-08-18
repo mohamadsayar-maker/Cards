@@ -15,6 +15,7 @@ REQUIRED = (
     "ai-cards.js",
     "ai-design-mastery.html",
     "ai-design-cards.js",
+    "ai-design-card-edits.js",
 )
 
 
