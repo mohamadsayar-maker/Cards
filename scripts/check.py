@@ -16,6 +16,8 @@ REQUIRED = (
     "ai-design-mastery.html",
     "ai-design-cards.js",
     "ai-design-card-edits.js",
+    "macro-lens.html",
+    "macro-lens-cards.js",
 )
 
 
@@ -36,6 +38,12 @@ def main() -> int:
     ai_design_count = ai_design.count('{"id":')
     if ai_design_count != 53:
         print(f"Expected 53 AI Design Mastery cards, found {ai_design_count}.", file=sys.stderr)
+        return 1
+
+    macro_lens = (ROOT / "macro-lens-cards.js").read_text(encoding="utf-8")
+    macro_lens_count = macro_lens.count('{"id":')
+    if macro_lens_count != 141:
+        print(f"Expected 141 Macro Lens cards, found {macro_lens_count}.", file=sys.stderr)
         return 1
 
     print(f"Cards smoke check passed ({len(REQUIRED)} required files, {len(links)} landing-page links).")
