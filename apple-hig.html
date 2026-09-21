@@ -7,8 +7,8 @@
 </head>
 <body>
 <script>
-// Use the same card markup, layout, interactions, animation, sound and settings
-// as every other Cards deck, while keeping the HIG content in its own JS file.
+// Reuse the exact card markup, layout, flip mechanics, animation, sound and
+// settings from card2.html. Only the deck's content and title are different.
 (async () => {
   try {
     const response = await fetch('card2.html');
@@ -22,9 +22,8 @@
     html = html.replace(scripts, '<script src="apple-hig-cards.js"><\/script>\n' + scripts);
     html = html.replace(branch, `}:deckKey==='apple-hig'?{
   title:'Apple HIG',
-  cards:window.appleHIGCards
+  cards:window.appleHIGCards.map((card,index)=>({...card,id:index+1}))
 ` + branch);
-    // Keep the shared engine's own deck routing rather than duplicating its UI.
     history.replaceState(null, '', 'apple-hig.html?deck=apple-hig');
     document.open();
     document.write(html);
