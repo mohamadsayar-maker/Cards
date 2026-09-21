@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Apple UI Mastery Deck</title>
+</head>
+<body>
+<script>
+// Load the identical card experience used by the other decks, only the content changes.
+(async () => {
+  try {
+    const response = await fetch('card2.html');
+    if (!response.ok) throw new Error(`Shared deck returned ${response.status}`);
+    let html = await response.text();
+    const scripts = '<script src="macro-lens-cards.js"><\/script>';
+    const branch = "}:deckKey==='macro-lens'?{";
+    if (!html.includes(scripts) || !html.includes(branch)) throw new Error('Shared deck structure has changed');
+    html = html.replace(scripts, '<script src="apple-ui-mastery-cards.js"><\/script>\n' + scripts);
+    html = html.replace(branch, `}:deckKey==='apple-ui-mastery'?{
+  title:'Apple UI Mastery',
+  cards:window.appleUIMasteryCards
+` + branch);
+    history.replaceState(null, '', 'apple-ui-mastery.html?deck=apple-ui-mastery');
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (error) {
+    document.body.textContent = 'Could not load Apple UI Mastery. Please refresh the page.';
+    console.error('Apple UI Mastery deck:', error);
+  }
+})();
+</script>
+</body>
+</html>
