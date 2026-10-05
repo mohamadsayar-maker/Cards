@@ -21,6 +21,7 @@
   title:'AI for Creativity',
   cards:window.aiForCreativityCards
 ` + branch);
+    html = html.replace('current=0', 'current=Math.floor(Math.random()*cards.length)');
     history.replaceState(null, '', 'ai-for-creativity.html?deck=ai-for-creativity');
     document.open();
     document.write(html);
