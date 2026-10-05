@@ -21,6 +21,7 @@
   title:'Apple UI Mastery',
   cards:window.appleUIMasteryCards
 ` + branch);
+    html = html.replace('current=0', 'current=Math.floor(Math.random()*cards.length)');
     history.replaceState(null, '', 'apple-ui-mastery.html?deck=apple-ui-mastery');
     document.open();
     document.write(html);
