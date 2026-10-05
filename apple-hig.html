@@ -24,6 +24,7 @@
   title:'Apple HIG',
   cards:window.appleHIGCards.map((card,index)=>({...card,id:index+1}))
 ` + branch);
+    html = html.replace('current=0', 'current=Math.floor(Math.random()*cards.length)');
     history.replaceState(null, '', 'apple-hig.html?deck=apple-hig');
     document.open();
     document.write(html);
