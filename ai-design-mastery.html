@@ -3,11 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta http-equiv="refresh" content="0; url=card2.html?deck=ai-design">
 <title>AI Product Design Mastery</title>
 </head>
 <body>
-<p>Opening AI Product Design Mastery…</p>
-<script>window.location.replace('card2.html?deck=ai-design');</script>
+<script>
+(async () => {
+  try {
+    const response = await fetch('card2.html');
+    if (!response.ok) throw new Error(`Shared deck returned ${response.status}`);
+    let html = await response.text();
+    html = html.replace('current=0', 'current=Math.floor(Math.random()*cards.length)');
+    history.replaceState(null, '', 'ai-design-mastery.html?deck=ai-design');
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (error) {
+    document.body.textContent = 'Could not load AI Product Design Mastery. Please refresh the page.';
+    console.error('AI Product Design Mastery deck:', error);
+  }
+})();
+</script>
 </body>
 </html>
