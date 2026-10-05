@@ -386,7 +386,7 @@ const defaults={
   darkBg:'#171713',darkCard:'#26251f',darkInk:'#ffffff',darkMuted:'#aaa79f',darkFrontShadow:.36,darkBackShadow:.16,
   soundEnabled:1,soundProfile:'soft',soundVolume:.35,flipPitch:180,scrollPitch:110,soundDecay:.08
 };
-let s={...defaults},current=0,dragging=false,pointerId=null,moved=false,settling=false;
+let s={...defaults},current=Math.floor(Math.random()*cards.length),dragging=false,pointerId=null,moved=false,settling=false;
 let startX=0,startY=0,lastX=0,lastY=0,lastTime=0,dx=0,dy=0,vx=0,vy=0;
 let pressStartedOnActiveFace=false;
 let audioCtx=null;
