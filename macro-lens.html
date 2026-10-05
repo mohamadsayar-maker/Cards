@@ -2,12 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="refresh" content="0; url=card2.html?deck=macro-lens">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Macro Lens</title>
 </head>
 <body>
-<p>Opening Macro Lens…</p>
-<script>window.location.replace('card2.html?deck=macro-lens');</script>
+<script>
+(async () => {
+  try {
+    const response = await fetch('card2.html');
+    if (!response.ok) throw new Error(`Shared deck returned ${response.status}`);
+    let html = await response.text();
+    html = html.replace('current=0', 'current=Math.floor(Math.random()*cards.length)');
+    history.replaceState(null, '', 'macro-lens.html?deck=macro-lens');
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (error) {
+    document.body.textContent = 'Could not load Macro Lens. Please refresh the page.';
+    console.error('Macro Lens deck:', error);
+  }
+})();
+</script>
 </body>
 </html>
